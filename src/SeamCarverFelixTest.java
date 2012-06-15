@@ -1,6 +1,5 @@
 package prog2.project2.tests;
 
-
 import java.awt.image.BufferedImage;
 
 import junit.framework.TestCase;
@@ -20,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class SeamCarverFelixTest extends TestCase {
-	static final String version = "1.3";
+	static final String version = "1.4";
 	
 	private SeamCarver prog;
 

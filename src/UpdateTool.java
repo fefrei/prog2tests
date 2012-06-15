@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -20,6 +22,43 @@ public class UpdateTool extends TestCase {
 	@Test
 	public void test_Update() {
 		UpdateTool.doUpdateTest("UpdateTool", version);
+	}
+	
+	@Test
+	public static final void test_GetNewTests() {
+		try {
+			URL url = new URL("https://prog2tests.googlecode.com/svn/distribution/releases.txt");
+			InputStreamReader streamReader = new InputStreamReader(
+					url.openStream());
+			BufferedReader reader = new BufferedReader(streamReader);
+			String releasePath = reader.readLine();
+			List<String> releases = new ArrayList<String>();
+			boolean newLineRead = true;
+			while(true) {
+				String in = reader.readLine();
+				if(in == null) {
+					break;
+				} else {
+					releases.add(in);
+				}
+			}
+			
+			reader.close();
+			streamReader.close();
+			
+			releasePath = releasePath.replace('|', File.separatorChar);
+			
+			for(String item : releases) {
+				File file = new File(releasePath + item);
+				if(!file.exists()) {
+					System.out.println("A new test file is available and will be downloaded: " + item);
+					downloadFile(item, releasePath);
+				}
+			}
+		} catch (Exception e) {
+			fail("Failed to check for new tests because an error occurred. Maybe you are offline?\n"
+					+ "That happened: " + e.getMessage());
+		}
 	}
 	
 	public static final void doUpdateTest(final String testID,
@@ -105,16 +144,20 @@ public class UpdateTool extends TestCase {
 		return version;
 	}
 	
-	private static final void downloadTest(String testID, String updatePath) throws Exception {
+	private static final void downloadFile(String fileName, String updatePath) throws Exception {
 	    updatePath = updatePath.replace('|', File.separatorChar);
 
 	    URL url = new URL("https://prog2tests.googlecode.com/svn/src/"
-				+ testID + ".java");
+				+ fileName);
 	    ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-	    FileOutputStream fos = new FileOutputStream(updatePath + testID + ".java");
+	    FileOutputStream fos = new FileOutputStream(updatePath + fileName);
 	    fos.getChannel().transferFrom(rbc, 0, 1 << 24);
 	    
 	    fos.close();
 	    rbc.close();
+	}
+	
+	private static final void downloadTest(String testName, String updatePath) throws Exception {
+		downloadFile(testName + ".java", updatePath);
 	}
 }
