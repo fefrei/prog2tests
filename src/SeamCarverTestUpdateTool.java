@@ -17,13 +17,13 @@ import junit.framework.TestCase;
 // Felix Freiberger, 2012
 // ONLY FOR USE IN PROJECT 2
 
-public class UpdateTool extends TestCase {
+public class SeamCarverTestUpdateTool extends TestCase {
 	static final String projectID = "project2";
 	static final String version = "1.1";
 	
 	@Test
 	public void test_Update() {
-		UpdateTool.doUpdateTest("UpdateTool", version);
+		SeamCarverTestUpdateTool.doUpdateTest("UpdateTool", version);
 	}
 	
 	@Test
