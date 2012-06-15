@@ -1,5 +1,5 @@
 prog2|project2|tests|
-UpdateTool.java
+SeamCarverTestUpdateTool.java
 SeamCarverFelixTest.java
 SeamCarverBewiedTest.java
 CORNERS_2_2_0_1_255_255255255
