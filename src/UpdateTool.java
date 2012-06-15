@@ -13,11 +13,13 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 
-//Prog2 Test Update Tool
-//Felix Freiberger, 2012
+// Prog2 Test Update Tool
+// Felix Freiberger, 2012
+// ONLY FOR USE IN PROJECT 2
 
 public class UpdateTool extends TestCase {
-	static final String version = "1.0";
+	static final String projectID = "project2";
+	static final String version = "1.1";
 	
 	@Test
 	public void test_Update() {
@@ -27,19 +29,20 @@ public class UpdateTool extends TestCase {
 	@Test
 	public static final void test_GetNewTests() {
 		try {
-			URL url = new URL("https://prog2tests.googlecode.com/svn/distribution/releases.txt");
+			URL url = new URL("https://prog2tests.googlecode.com/svn/distribution/" + projectID + ".txt");
 			InputStreamReader streamReader = new InputStreamReader(
 					url.openStream());
 			BufferedReader reader = new BufferedReader(streamReader);
 			String releasePath = reader.readLine();
 			List<String> releases = new ArrayList<String>();
-			boolean newLineRead = true;
 			while(true) {
 				String in = reader.readLine();
 				if(in == null) {
 					break;
 				} else {
-					releases.add(in);
+					if(in.length() > 0) {
+						releases.add(in);
+					}
 				}
 			}
 			
@@ -48,12 +51,19 @@ public class UpdateTool extends TestCase {
 			
 			releasePath = releasePath.replace('|', File.separatorChar);
 			
+			boolean newTestsInstalled = false;
+			
 			for(String item : releases) {
 				File file = new File(releasePath + item);
 				if(!file.exists()) {
 					System.out.println("A new test file is available and will be downloaded: " + item);
 					downloadFile(item, releasePath);
+					newTestsInstalled = true;
 				}
+			}
+			
+			if(newTestsInstalled) {
+				System.out.println("New test files were installed. Please, refresh (F5) and run the tests again.");
 			}
 		} catch (Exception e) {
 			fail("Failed to check for new tests because an error occurred. Maybe you are offline?\n"
