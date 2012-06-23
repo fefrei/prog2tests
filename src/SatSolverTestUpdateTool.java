@@ -1,25 +1,51 @@
 package prog2.project3.tests;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
 
 import junit.framework.TestCase;
+
+import org.junit.Test;
 
 // Prog2 Test Update Tool
 // Felix Freiberger, 2012
 // Ben Wiederhake, 2012
 
 public class SatSolverTestUpdateTool extends TestCase {
-	private static final String projectID = "project3", version = "1.1";
+	// ===== Constants, containing the long, descriptive text =====
+
+	private static final String projectID = "project3", version = "1.2",
+
+	NEW_FILES = " new test files were installed. Please, refresh"
+			+ " and run the tests again.\n"
+			+ "To do this, select the \"test\"-package in the Package"
+			+ " Explorer and press F5.",
+
+	UPDATE_COMPLETE = "Update completed. Refresh in Eclipse and rerun.\n"
+			+ "To do this, select the Test-package in"
+			+ " Package Explorer and press F5.",
+
+	NEW_FILES_FAILED = "Failed to check for new tests"
+			+ " because an error occurred.\n",
+
+	DISTRIB = "distribution", SRC = "src", UPDATE = "update";
+
+	private static final boolean NEVER_OPEN_BROWSER = false;
+	
+	/**
+	 * Copied from BufferedInputStream.defaultBufferSize:
+	 */
+	private static final int DEFAULT_BUFFER_SIZE = 8192;
+
+	// ===== Tests to be run by this "Test" =====
 
 	@Test
 	public void test_Update() {
@@ -28,105 +54,111 @@ public class SatSolverTestUpdateTool extends TestCase {
 	}
 
 	@Test
-	public static final void test_GetNewTests() {
+	public void test_GetNewTests() {
+		int updated = 0;
+		String current = null;
 		try {
-			URL url = new URL(
-					"https://prog2tests.googlecode.com/svn/distribution/"
-							+ projectID + ".txt");
-			InputStreamReader streamReader = new InputStreamReader(
-					url.openStream());
-			BufferedReader reader = new BufferedReader(streamReader);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					createURLInputStream(DISTRIB, projectID + ".txt")));
+
+			// Start with root, since there is no way to change it back to root
+			// later.
 			String releasePath = "";
-			List<String> releaseInfo = new ArrayList<String>();
-			while (true) {
-				String in = reader.readLine();
-				if (in == null) {
-					break;
-				} else {
-					if (in.length() > 0) {
-						releaseInfo.add(in);
-					}
+
+			while ((current = reader.readLine()) != null) {
+				if (current.isEmpty() || isComment(current)) {
+					continue;
+				}
+				if (current.contains("..")) {
+					reader.close();
+					fail("Suspicious line '" + current
+							+ "' encountered. You might be under attack.");
+				}
+				if (current.contains("|")) {
+					releasePath = current.replace('|', File.separatorChar);
+					continue;
+				}
+				File file = new File(releasePath + current);
+				if (!file.canRead()) {
+					// We'll test later whether the filesystem is sane.
+					// For now, We want to report THAT there need to be
+					// something done.
+					System.out.print("Downloading " + current);
+					file.getParentFile().mkdirs();
+					downloadFile(current, releasePath);
+					System.out.println(" -- Completed.");
+					updated += 1;
 				}
 			}
-
-			reader.close();
-			streamReader.close();
-
-			boolean newTestsInstalled = false;
-
-			for (String item : releaseInfo) {
-				if (item.contains("|")) {
-					releasePath = item.replace('|', File.separatorChar);
-				} else {
-					File file = new File(releasePath + item);
-					if (!file.exists()) {
-						System.out
-								.println("A new test file is available and will be downloaded: "
-										+ item);
-						file.mkdirs();
-						downloadFile(item, releasePath);
-						newTestsInstalled = true;
-					}
-				}
+		} catch (IOException e) {
+			String suggestion;
+			if (current == null) {
+				suggestion = "Maybe you are offline?";
+			} else {
+				suggestion = "It seems that " + current
+						+ " is causing the problem.";
 			}
-
-			if (newTestsInstalled) {
-				System.out
-						.println("New test files were installed. Please, refresh and run the tests again.\n"
-								+ "To do this, select the Test-package in Package Explorer and press F5.");
-				fail("New test files were installed. Please, refresh and run the tests again.");
-			}
-		} catch (Exception e) {
-			fail("Failed to check for new tests because an error occurred. Maybe you are offline?\n"
-					+ "That happened: " + e.getMessage());
+			throw new RuntimeException(NEW_FILES_FAILED + suggestion, e);
+		}
+		
+		if (updated > 0) {
+			System.out.println(updated + NEW_FILES);
+			fail(updated + NEW_FILES);
 		}
 	}
+
+	// ===== Methods to be called by other tests =====
 
 	public static final void doUpdateTest(final String testID,
 			final String currentVersion) {
+		String remoteVersion, updatePath;
+
+		// Poll and verify remote version:
+
 		try {
-			URL url = new URL("https://prog2tests.googlecode.com/svn/update/"
-					+ testID + ".version.txt");
-			InputStreamReader streamReader = new InputStreamReader(
-					url.openStream());
-			BufferedReader reader = new BufferedReader(streamReader);
-			String remoteVersion = reader.readLine();
-			String updatePath = reader.readLine();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					createURLInputStream(UPDATE, testID + ".version.txt")));
+			remoteVersion = reader.readLine();
+			updatePath = reader.readLine();
 			reader.close();
-			streamReader.close();
-
-			if (remoteVersion == null) {
-				fail("Failed to check for updates, the remote version string is null");
-			}
-
-			if (!isUpToDate(currentVersion, remoteVersion)) {
-				System.out.println("You test is out of date.\n"
-						+ "You have version " + currentVersion
-						+ ", but the current version is " + remoteVersion
-						+ "\n" + "You will be auto-updated to that version...");
-
-				try {
-					downloadTest(testID, updatePath);
-					System.out
-							.println("Update completed. Refresh in Eclipse and rerun.\n"
-									+ "To do this, select the Test-package in Package Explorer and press F5.");
-					fail("Update completed. Refresh in Eclipse and rerun.");
-				} catch (Exception e) {
-					System.out.println("ERROR: " + e.getMessage());
-					fail("Your version is out-of-date, but the update failed.");
-				}
-			}
-
-			return; // pass
-		} catch (Exception e) {
-			fail("Failed to check for updates because an error occurred. Maybe you are offline?\n"
-					+ "That happened: " + e.getMessage());
+		} catch (IOException e) {
+			throw new RuntimeException(
+					"Failed to connect with repository. Are you online at all?",
+					e);
 		}
+
+		if (remoteVersion == null || updatePath == null) {
+			fail("Failed to check for updates: remoteVersion = "
+					+ remoteVersion + ", updatePath = " + updatePath);
+		}
+
+		// Check own version:
+
+		if (isUpToDate(currentVersion, remoteVersion)) {
+			return;
+		}
+
+		// Update if necesary:
+
+		System.out.println("Trying to update " + testID + " from "
+				+ currentVersion + " to " + remoteVersion + " ...");
+
+		try {
+			downloadTest(testID, updatePath);
+		} catch (IOException e) {
+			throw new RuntimeException("Update on " + testID + " to version "
+					+ remoteVersion + " failed. Simply delete that"
+					+ " file if things get worse.", e);
+		}
+
+		System.out.println(UPDATE_COMPLETE);
+		fail(UPDATE_COMPLETE);
 	}
 
 	public static final void openUrl(String url) {
+		boolean couldOpen = !NEVER_OPEN_BROWSER;
 		try {
-			if (java.awt.Desktop.isDesktopSupported()) {
+			if (couldOpen && java.awt.Desktop.isDesktopSupported()) {
 				java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
 
 				if (desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
@@ -135,10 +167,31 @@ public class SatSolverTestUpdateTool extends TestCase {
 				}
 			}
 		} catch (Exception e) {
+			couldOpen = false;
+		}
+		if (!couldOpen) {
 			System.out
 					.println("We tried to send you to a helpful page, but something went wrong.\n"
 							+ "Try going there manually: " + url);
 		}
+	}
+
+
+	// ===== Internal helper methods =====
+
+	private static final boolean isComment(String s) {
+		switch (s.charAt(0)) {
+		case ';':
+		case ':':
+		case '/':
+		case '\\':
+		case ' ':
+		case '-':
+			return true;
+		default:
+			return false;
+		}
+		// System.out.println("This should be dead code");
 	}
 
 	private static final boolean isUpToDate(String currentS, String remoteS) {
@@ -170,21 +223,34 @@ public class SatSolverTestUpdateTool extends TestCase {
 	}
 
 	private static final void downloadFile(String fileName, String updatePath)
-			throws Exception {
+			throws IOException {
 		updatePath = updatePath.replace('|', File.separatorChar);
+		
+		InputStream in = new BufferedInputStream(createURLInputStream(SRC, fileName));
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(updatePath + fileName));
+		
+		final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		int bytesRead;
+		
+		do {
+			bytesRead = in.read(buffer);
+			if (bytesRead > 0) {
+				out.write(buffer, 0, bytesRead);
+			}
+		} while(bytesRead > 0);
 
-		URL url = new URL("https://prog2tests.googlecode.com/svn/src/"
-				+ fileName);
-		ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-		FileOutputStream fos = new FileOutputStream(updatePath + fileName);
-		fos.getChannel().transferFrom(rbc, 0, 1 << 24);
-
-		fos.close();
-		rbc.close();
+		in.close();
+		out.close();
 	}
 
 	private static final void downloadTest(String testName, String updatePath)
-			throws Exception {
+			throws IOException {
 		downloadFile(testName + ".java", updatePath);
+	}
+
+	private static final InputStream createURLInputStream(String section,
+			String filename) throws IOException {
+		return new URL("https://prog2tests.googlecode.com/svn/" + section + "/"
+				+ filename).openStream();
 	}
 }
