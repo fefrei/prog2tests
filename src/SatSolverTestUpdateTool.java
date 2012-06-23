@@ -28,10 +28,18 @@ public class SatSolverTestUpdateTool extends TestCase {
 
 	private static final boolean NEVER_OPEN_BROWSER = false;
 
+	/**
+	 * 0 is the standard channel.
+	 * 
+	 * Higher values are used for beta testing. Use only if you know how to fix
+	 * any problems. You don't get any advantages if you set this higher.
+	 */
+	private static final int OWN_CHANNEL = 0;
+
 	// ===== Internal constants =====
 	// You shouldn't need to change anything below this
 
-	private static final String PROJECT_ID = "project3", VERSION = "1.3",
+	private static final String PROJECT_ID = "project3", VERSION = "1.4",
 			DISTRIB = "distribution", SRC = "src", UPDATE = "update",
 			NAME = "SatSolverTestUpdateTool";
 
@@ -64,6 +72,21 @@ public class SatSolverTestUpdateTool extends TestCase {
 				if (current.isEmpty() || isComment(current)) {
 					continue;
 				}
+				if (current.startsWith(":")) {
+					int channel;
+					try {
+						channel = Integer.valueOf(current.substring(1,
+								current.length()));
+					} catch (NumberFormatException e) {
+						channel = Integer.MIN_VALUE;
+					}
+					if (channel >= OWN_CHANNEL) {
+						current = null;
+						break;
+					} else {
+						continue;
+					}
+				}
 				if (current.contains("..")) {
 					reader.close();
 					fail("Suspicious line '" + current
@@ -77,6 +100,8 @@ public class SatSolverTestUpdateTool extends TestCase {
 				if (!file.canRead()) {
 					// If we can read from it, it probably exists, and someone
 					// checks for its version already.
+					// If we can't read from it, it probably doesn't exists,
+					// and we should fetch that file.
 
 					// We'll test later whether the filesystem is sane.
 					// For now, We want to know THAT there needs to be
@@ -184,8 +209,8 @@ public class SatSolverTestUpdateTool extends TestCase {
 
 	private static final boolean isComment(String s) {
 		switch (s.charAt(0)) {
+		case '#':
 		case ';':
-		case ':':
 		case '/':
 		case '\\':
 		case ' ':
