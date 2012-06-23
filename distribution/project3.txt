@@ -23,9 +23,7 @@ simple.txt
 simpleLinebreak.txt
 simpleSpace.txt
 
-:2
-# I'm not quite sure whether this can update anything correctly
-# Cogito, ergo beta.
+# Force-update old, broken versions of Markus' test by distributing a new one
 prog2|project3|tests|
 -MarkusFormulaReaderTest.java
 -MarkusFormulaReader.java
