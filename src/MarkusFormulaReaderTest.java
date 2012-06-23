@@ -217,6 +217,6 @@ public class MarkusFormulaReaderTest extends TestCase {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("MarkusFormulaReader", "1.0");
+		SatSolverTestUpdateTool.doUpdateTest("MarkusFormulaReaderTest", "1.0.1");
 	}
 }
