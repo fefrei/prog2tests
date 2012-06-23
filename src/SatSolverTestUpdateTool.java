@@ -15,10 +15,10 @@ import junit.framework.TestCase;
 
 // Prog2 Test Update Tool
 // Felix Freiberger, 2012
+// Ben Wiederhake, 2012
 
 public class SatSolverTestUpdateTool extends TestCase {
-	static final String projectID = "project3";
-	static final String version = "1.0";
+	private static final String projectID = "project3", version = "1.1";
 	
 	@Test
 	public void test_Update() {
