@@ -1,2 +1,2 @@
-prog2|project2|tests|
+prog2|project3|tests|
 SatSolverTestUpdateTool.java
