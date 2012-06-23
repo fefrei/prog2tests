@@ -15,31 +15,26 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-// Prog2 Test Update Tool
-// Felix Freiberger, 2012
-// Ben Wiederhake, 2012
+/**
+ * Prog2 Test Update Tool
+ * 
+ * @author Felix Freiberger, 2012
+ * @author Ben Wiederhake, 2012
+ */
 
 public class SatSolverTestUpdateTool extends TestCase {
-	// ===== Constants, containing the long, descriptive text =====
-
-	private static final String projectID = "project3", version = "1.2",
-
-	NEW_FILES = " new test files were installed. Please, refresh"
-			+ " and run the tests again.\n"
-			+ "To do this, select the \"test\"-package in the Package"
-			+ " Explorer and press F5.",
-
-	UPDATE_COMPLETE = "Update completed. Refresh in Eclipse and rerun.\n"
-			+ "To do this, select the Test-package in"
-			+ " Package Explorer and press F5.",
-
-	NEW_FILES_FAILED = "Failed to check for new tests"
-			+ " because an error occurred.\n",
-
-	DISTRIB = "distribution", SRC = "src", UPDATE = "update";
+	// ===== Constants and parameters =====
+	// Feel free to change these
 
 	private static final boolean NEVER_OPEN_BROWSER = false;
-	
+
+	// ===== Internal constants =====
+	// You shouldn't need to change anything below this
+
+	private static final String PROJECT_ID = "project3", VERSION = "1.3",
+			DISTRIB = "distribution", SRC = "src", UPDATE = "update",
+			NAME = "SatSolverTestUpdateTool";
+
 	/**
 	 * Copied from BufferedInputStream.defaultBufferSize:
 	 */
@@ -49,17 +44,17 @@ public class SatSolverTestUpdateTool extends TestCase {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool
-				.doUpdateTest("SatSolverTestUpdateTool", version);
+		SatSolverTestUpdateTool.doUpdateTest(NAME, VERSION);
 	}
 
 	@Test
 	public void test_GetNewTests() {
+		BufferedReader reader = null;
 		int updated = 0;
 		String current = null;
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					createURLInputStream(DISTRIB, projectID + ".txt")));
+			reader = new BufferedReader(new InputStreamReader(
+					createURLInputStream(DISTRIB, PROJECT_ID + ".txt")));
 
 			// Start with root, since there is no way to change it back to root
 			// later.
@@ -80,9 +75,12 @@ public class SatSolverTestUpdateTool extends TestCase {
 				}
 				File file = new File(releasePath + current);
 				if (!file.canRead()) {
+					// If we can read from it, it probably exists, and someone
+					// checks for its version already.
+
 					// We'll test later whether the filesystem is sane.
-					// For now, We want to report THAT there need to be
-					// something done.
+					// For now, We want to know THAT there needs to be
+					// something done: downloadFile() cares about that.
 					System.out.print("Downloading " + current);
 					file.getParentFile().mkdirs();
 					downloadFile(current, releasePath);
@@ -90,17 +88,27 @@ public class SatSolverTestUpdateTool extends TestCase {
 					updated += 1;
 				}
 			}
+			reader.close();
+			reader = null;
 		} catch (IOException e) {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+					// Ignore
+				}
+				reader = null;
+			}
 			String suggestion;
 			if (current == null) {
-				suggestion = "Maybe you are offline?";
+				suggestion = OFFLINE;
 			} else {
 				suggestion = "It seems that " + current
 						+ " is causing the problem.";
 			}
 			throw new RuntimeException(NEW_FILES_FAILED + suggestion, e);
 		}
-		
+
 		if (updated > 0) {
 			System.out.println(updated + NEW_FILES);
 			fail(updated + NEW_FILES);
@@ -122,9 +130,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 			updatePath = reader.readLine();
 			reader.close();
 		} catch (IOException e) {
-			throw new RuntimeException(
-					"Failed to connect with repository. Are you online at all?",
-					e);
+			throw new RuntimeException(OFFLINE, e);
 		}
 
 		if (remoteVersion == null || updatePath == null) {
@@ -138,7 +144,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 			return;
 		}
 
-		// Update if necesary:
+		// Update if necessary:
 
 		System.out.println("Trying to update " + testID + " from "
 				+ currentVersion + " to " + remoteVersion + " ...");
@@ -170,12 +176,9 @@ public class SatSolverTestUpdateTool extends TestCase {
 			couldOpen = false;
 		}
 		if (!couldOpen) {
-			System.out
-					.println("We tried to send you to a helpful page, but something went wrong.\n"
-							+ "Try going there manually: " + url);
+			System.out.println(LINK + url);
 		}
 	}
-
 
 	// ===== Internal helper methods =====
 
@@ -222,22 +225,52 @@ public class SatSolverTestUpdateTool extends TestCase {
 		return version;
 	}
 
+	private static final OutputStream fileOutputStream(String fullPath)
+			throws IOException {
+		File file = new File(fullPath);
+		// Test for all the funny things that might happen
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				throw new RuntimeException(fullPath + FOUND_DIRECTORY);
+			}
+			System.out.println("Overwriting file " + fullPath);
+			if (!file.canWrite()) {
+				System.out.println(CANT_WRITE);
+			}
+			if (!file.isFile()) {
+				// Yay, insane filesystem, hardlink, or something else that
+				// DEFINITELY shouldn't be here.
+				System.out.println(INSANE_FS);
+			}
+		} else {
+			System.out.println("Creating file " + fullPath);
+			// File does not yet exist.
+			if (!file.createNewFile()) {
+				throw new IOException(CANT_CREATE);
+			}
+		}
+		return new BufferedOutputStream(new FileOutputStream(file));
+	}
+
 	private static final void downloadFile(String fileName, String updatePath)
 			throws IOException {
 		updatePath = updatePath.replace('|', File.separatorChar);
-		
-		InputStream in = new BufferedInputStream(createURLInputStream(SRC, fileName));
-		OutputStream out = new BufferedOutputStream(new FileOutputStream(updatePath + fileName));
-		
+
+		InputStream in = new BufferedInputStream(createURLInputStream(SRC,
+				fileName));
+		// Sorry, but the princess is in another castle:
+		// See fileOutputStream() for handling most the edges.
+		OutputStream out = fileOutputStream(updatePath + fileName);
+
 		final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		int bytesRead;
-		
+
 		do {
 			bytesRead = in.read(buffer);
 			if (bytesRead > 0) {
 				out.write(buffer, 0, bytesRead);
 			}
-		} while(bytesRead > 0);
+		} while (bytesRead > 0);
 
 		in.close();
 		out.close();
@@ -253,4 +286,33 @@ public class SatSolverTestUpdateTool extends TestCase {
 		return new URL("https://prog2tests.googlecode.com/svn/" + section + "/"
 				+ filename).openStream();
 	}
+
+	private static final String
+
+	NEW_FILES = " new test files were installed. Please, refresh"
+			+ " and run the tests again.\n"
+			+ "To do this, select the \"test\"-package in the Package"
+			+ " Explorer and press F5.",
+
+	UPDATE_COMPLETE = "Update completed. Refresh in Eclipse and rerun.\n"
+			+ "To do this, select the Test-package in"
+			+ " Package Explorer and press F5.",
+
+	NEW_FILES_FAILED = "Failed to check for new tests",
+
+	FOUND_DIRECTORY = " already exists and is a directory. I won't touch it,"
+			+ " since there shouldn't be anything like a directory.",
+
+	INSANE_FS = "Warning: File is neither File nor Directory.\n"
+			+ "\tFilesystem sane?",
+
+	CANT_WRITE = "Warning: Can't write file, I guess: Check"
+			+ " file attributes, and lift any write-protection.",
+
+	CANT_CREATE = "Can't create new file. Check write"
+			+ " permissions in directory.",
+
+	OFFLINE = "Failed to connect with repository. Make sure you are online.",
+
+	LINK = "Couldn't open browser\n\tTry to open this link manually: ";
 }
