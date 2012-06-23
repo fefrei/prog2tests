@@ -1,8 +1,10 @@
+# Basic files
 prog2|project3|tests|
 SatSolverTestUpdateTool.java
 FormulaReaderBewiedTest.java
-MarkusFormulaReaderTest.java
 MarkusBonus1Test.java
+
+# Ugh. Remember to move them
 Markus001.txt
 Markus002.txt
 Markus003.txt
@@ -12,9 +14,20 @@ Markus006.txt
 Markus007.txt
 Markus008.txt
 Markus009.txt
+
+# Given example files.
 examples|
 empty.txt
 linebreakformula.txt
 simple.txt
 simpleLinebreak.txt
 simpleSpace.txt
+
+:2
+# I'm not quite sure whether this can update anything correctly
+# Cogito, ergo beta.
+prog2|project3|tests|
+-MarkusFormulaReaderTest.java
+-MarkusFormulaReader.java
+FormulaReaderMarkusTest.java
+
