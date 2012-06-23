@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 
 // Prog2 Test Update Tool
 // Felix Freiberger, 2012
-// ONLY FOR USE IN PROJECT 2
 
 public class SatSolverTestUpdateTool extends TestCase {
 	static final String projectID = "project3";
