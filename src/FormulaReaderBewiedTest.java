@@ -15,8 +15,8 @@ public class FormulaReaderBewiedTest extends TestCase {
 
 	// I'm NOT testing any file I/O here.
 	// I ONLY test the FromString method.
-	// I simply assume/hope that FromFile and FromString do the same in your
-	// implementation.
+	// I simply assume/hope that FromFile and FromString do the
+	// same in your implementation.
 
 	/**
 	 * Maximum count of errors to be printed per call to tryCombinations -- be
@@ -29,7 +29,7 @@ public class FormulaReaderBewiedTest extends TestCase {
 	 * 'true':
 	 */
 	private static final boolean IGNORE_BONUS_ONE = false;
-	
+
 	// ========== MAGIC values. They are magic. ==========
 
 	/**
@@ -43,16 +43,12 @@ public class FormulaReaderBewiedTest extends TestCase {
 			"\u00A0", "\u1680", "\u180E", "\u2000", "\u2006", "\u200A",
 			"\u2028", "\u2029", "\u202F", "\u205F", "\u3000" };
 	/**
-	 * Note that you are not supposed to use Character.isWhitespace(). The
-	 * following is a regex that matches the ONLY "whitespace" that is allowed
-	 * as such:
-	 * 
-	 * <pre>
-	 * [ \t\n\x0B\f\r]
-	 * </pre>
+	 * Note that you are not supposed to use Character.isWhitespace(). That
+	 * method does NOT check for "\s". This array contains EXACTLY those
+	 * characters that are regarded as 'whitespace' for this project.
 	 */
 	private static final String[] actualWhite = new String[] { "\t", "\n",
-			"\u000B", "\u000C", "\r", " " };
+			"\u000B", "\f", "\r", " " };
 	/**
 	 * These are some characters to ensure you aren"t using
 	 * Character.isLowercase() or something.
@@ -205,14 +201,14 @@ public class FormulaReaderBewiedTest extends TestCase {
 		};
 	}
 
-	private static final Tester expectorBonus(final String s) {
-		return new Tester() {
-			@Override
-			public void test(String input) {
-				assertBonusResult(s, input);
-			}
-		};
-	}
+	// private static final Tester expectorBonus(final String s) {
+	// return new Tester() {
+	// @Override
+	// public void test(String input) {
+	// assertBonusResult(s, input);
+	// }
+	// };
+	// }
 
 	private static final void assertResult(String expected, String input) {
 		assertEquals(expected, FormulaReader.readFormulaFromString(input)
@@ -250,8 +246,7 @@ public class FormulaReaderBewiedTest extends TestCase {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool
-				.doUpdateTest("FormulaReaderBewiedTest", "1.0");
+		SatSolverTestUpdateTool.doUpdateTest("FormulaReaderBewiedTest", "1.0.1");
 	}
 
 	private static interface Tester {
