@@ -39,7 +39,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 	// ===== Internal constants =====
 	// You shouldn't need to change anything below this
 
-	private static final String PROJECT_ID = "project3", VERSION = "1.4.2",
+	private static final String PROJECT_ID = "project3", VERSION = "1.5",
 			DISTRIB = "distribution", SRC = "src", UPDATE = "update",
 			NAME = "SatSolverTestUpdateTool";
 
@@ -60,6 +60,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 		BufferedReader reader = null;
 		int updated = 0;
 		String current = null;
+		boolean delete = false;
 		try {
 			reader = new BufferedReader(new InputStreamReader(
 					createURLInputStream(DISTRIB, PROJECT_ID + ".txt")));
@@ -72,7 +73,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 				if (current.isEmpty() || isComment(current)) {
 					continue;
 				}
-				if (current.startsWith(":")) {
+				if (current.charAt(0) == ':') {
 					int channel;
 					try {
 						channel = Integer.valueOf(current.substring(1,
@@ -96,8 +97,21 @@ public class SatSolverTestUpdateTool extends TestCase {
 					releasePath = current.replace('|', File.separatorChar);
 					continue;
 				}
+				if (current.charAt(0) == '-') {
+					delete = true;
+				}
 				File file = new File(releasePath + current);
-				if (!file.canRead()) {
+				if (delete) {
+					delete = false;
+					if (file.exists()) {
+						updated += 1;
+						System.out.println("Deleting file " + file);
+						if (!file.delete()) {
+							System.out.println("\tCouldn't delete" +
+									" -- please remove manually!");
+						}
+					}
+				} else if (!file.canRead()) {
 					// If we can read from it, it probably exists, and someone
 					// checks for its version already.
 					// If we can't read from it, it probably doesn't exists,
@@ -214,7 +228,15 @@ public class SatSolverTestUpdateTool extends TestCase {
 		case '/':
 		case '\\':
 		case ' ':
-		case '-':
+		case '*':
+		case '_':
+		case '?':
+		case '^':
+		case '!':
+		case '$':
+		case '<':
+		case '>':
+		case '+':
 			return true;
 		default:
 			return false;
