@@ -39,7 +39,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 	// ===== Internal constants =====
 	// You shouldn't need to change anything below this
 
-	private static final String PROJECT_ID = "project3", VERSION = "1.4",
+	private static final String PROJECT_ID = "project3", VERSION = "1.4.1",
 			DISTRIB = "distribution", SRC = "src", UPDATE = "update",
 			NAME = "SatSolverTestUpdateTool";
 
@@ -106,10 +106,10 @@ public class SatSolverTestUpdateTool extends TestCase {
 					// We'll test later whether the filesystem is sane.
 					// For now, We want to know THAT there needs to be
 					// something done: downloadFile() cares about that.
-					System.out.print("Downloading " + current);
+					System.out.println("Downloading " + current);
 					file.getParentFile().mkdirs();
 					downloadFile(current, releasePath);
-					System.out.println(" -- Completed.");
+					System.out.println("\tCompleted.");
 					updated += 1;
 				}
 			}
@@ -258,7 +258,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 			if (file.isDirectory()) {
 				throw new RuntimeException(fullPath + FOUND_DIRECTORY);
 			}
-			System.out.println("Overwriting file " + fullPath);
+			System.out.println("\tOverwriting file " + fullPath);
 			if (!file.canWrite()) {
 				System.out.println(CANT_WRITE);
 			}
@@ -268,7 +268,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 				System.out.println(INSANE_FS);
 			}
 		} else {
-			System.out.println("Creating file " + fullPath);
+			System.out.println("\tCreating file " + fullPath);
 			// File does not yet exist.
 			if (!file.createNewFile()) {
 				throw new IOException(CANT_CREATE);
@@ -328,10 +328,10 @@ public class SatSolverTestUpdateTool extends TestCase {
 	FOUND_DIRECTORY = " already exists and is a directory. I won't touch it,"
 			+ " since there shouldn't be anything like a directory.",
 
-	INSANE_FS = "Warning: File is neither File nor Directory.\n"
+	INSANE_FS = "\tWarning: File is neither File nor Directory.\n"
 			+ "\tFilesystem sane?",
 
-	CANT_WRITE = "Warning: Can't write file, I guess: Check"
+	CANT_WRITE = "\tWarning: Can't write file, I guess: Check"
 			+ " file attributes, and lift any write-protection.",
 
 	CANT_CREATE = "Can't create new file. Check write"
