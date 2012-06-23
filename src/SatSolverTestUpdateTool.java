@@ -34,12 +34,12 @@ public class SatSolverTestUpdateTool extends TestCase {
 	 * Higher values are used for beta testing. Use only if you know how to fix
 	 * any problems. You don't get any advantages if you set this higher.
 	 */
-	private static final int OWN_CHANNEL = 0;
+	private static final int OWN_CHANNEL = 5;
 
 	// ===== Internal constants =====
 	// You shouldn't need to change anything below this
 
-	private static final String PROJECT_ID = "project3", VERSION = "1.5",
+	private static final String PROJECT_ID = "project3", VERSION = "1.5.1",
 			DISTRIB = "distribution", SRC = "src", UPDATE = "update",
 			NAME = "SatSolverTestUpdateTool";
 
@@ -81,7 +81,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 					} catch (NumberFormatException e) {
 						channel = Integer.MIN_VALUE;
 					}
-					if (channel >= OWN_CHANNEL) {
+					if (OWN_CHANNEL < channel) {
 						current = null;
 						break;
 					} else {
@@ -99,6 +99,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 				}
 				if (current.charAt(0) == '-') {
 					delete = true;
+					current = current.substring(1);
 				}
 				File file = new File(releasePath + current);
 				if (delete) {

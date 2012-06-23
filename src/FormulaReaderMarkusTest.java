@@ -19,7 +19,7 @@ import prog2.project3.propositional.PropositionalFormula;
 
 import junit.framework.TestCase;
 
-public class MarkusFormulaReaderTest extends TestCase {
+public class FormulaReaderMarkusTest extends TestCase {
 	@Before
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -217,6 +217,6 @@ public class MarkusFormulaReaderTest extends TestCase {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("FormulaReaderMarkusTest", "1.0.2");
+		SatSolverTestUpdateTool.doUpdateTest("FormulaReaderMarkusTest", "1.0.3");
 	}
 }
