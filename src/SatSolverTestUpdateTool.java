@@ -39,7 +39,7 @@ public class SatSolverTestUpdateTool extends TestCase {
 	// ===== Internal constants =====
 	// You shouldn't need to change anything below this
 
-	private static final String PROJECT_ID = "project3", VERSION = "1.4.1",
+	private static final String PROJECT_ID = "project3", VERSION = "1.4.2",
 			DISTRIB = "distribution", SRC = "src", UPDATE = "update",
 			NAME = "SatSolverTestUpdateTool";
 
