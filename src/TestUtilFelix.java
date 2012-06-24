@@ -17,7 +17,7 @@ import prog2.project3.cnf.Cnf;
 import prog2.project3.cnf.Literal;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.1.1";
+	static final String VERSION = "1.1.2";
 
 	@Test
 	public void test_Update() {
@@ -97,8 +97,8 @@ public class TestUtilFelix {
 	}
 
 	/*
-	 * Generates a valid formula.
-	 * Length sets an upper limit to how complex the formula will be.
+	 * Generates a valid formula. Length sets an upper limit to how complex the
+	 * formula will be.
 	 */
 	public static String generateRandomFormula(int length) {
 		int remainingLength = length * 3;
@@ -143,8 +143,8 @@ public class TestUtilFelix {
 	}
 
 	/*
-	 * Fails and prints the given list and messages.
-	 * Only pronts a reasonable amount of messages.
+	 * Fails and prints the given list and messages. Only pronts a reasonable
+	 * amount of messages.
 	 */
 	public static void failAndExplain(String testName, int testCount,
 			Integer[] failedTests, String[] failureMessages) {
@@ -201,8 +201,8 @@ public class TestUtilFelix {
 	}
 
 	/*
-	 * Fails and prints the given list and messages.
-	 * Only pronts a reasonable amount of messages.
+	 * Fails and prints the given list and messages. Only pronts a reasonable
+	 * amount of messages.
 	 */
 	public static void failAndExplain(String testName, int testCount,
 			List<Integer> failedTests, List<String> failureMessages) {
@@ -212,8 +212,8 @@ public class TestUtilFelix {
 	}
 
 	/*
-	 * Fails if results contains a string that is not null.
-	 * Prints beautiful error messages.
+	 * Fails if results contains a string that is not null. Prints beautiful
+	 * error messages.
 	 */
 	public static void checkFailAndExplain(String testName, String[] results) {
 		int testCount = results.length;
@@ -224,7 +224,8 @@ public class TestUtilFelix {
 		for (int i = 0; i < testCount; i++) {
 			if (results[i] != null) {
 				failedTests.add(i + 1);
-				failureMessages.add(results[i]);
+				failureMessages.add("Test " + (i + 1)
+						+ " failed with this message:\n" + results[i]);
 			}
 		}
 
@@ -234,8 +235,8 @@ public class TestUtilFelix {
 	}
 
 	/*
-	 * Fails if results contains a string that is not null.
-	 * Prints beautiful error messages.
+	 * Fails if results contains a string that is not null. Prints beautiful
+	 * error messages.
 	 */
 	public static void checkFailAndExplain(String testName, List<String> results) {
 		checkFailAndExplain(testName, results.toArray(new String[0]));
