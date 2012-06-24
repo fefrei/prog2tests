@@ -4,7 +4,20 @@ SatSolverTestUpdateTool.java
 FormulaReaderBewiedTest.java
 MarkusBonus1Test.java
 
-# Ugh. Remember to move them
+# Old location for Marcus' files.
+# Remove when new version get's online.
+Markus001.txt
+Markus002.txt
+Markus003.txt
+Markus004.txt
+Markus005.txt
+Markus006.txt
+Markus007.txt
+Markus008.txt
+Markus009.txt
+
+# New location for Marcus' tests.
+examples|Markus|
 Markus001.txt
 Markus002.txt
 Markus003.txt
@@ -35,3 +48,16 @@ TestUtilFelix.java
 TseitinFelixTest.java
 examples|Felix|
 TseitinFelixTestData1.txt
+
+:2000
+# For now, don't delete them.
+prog2|project3|tests|
+-Markus001.txt
+-Markus002.txt
+-Markus003.txt
+-Markus004.txt
+-Markus005.txt
+-Markus006.txt
+-Markus007.txt
+-Markus008.txt
+-Markus009.txt
