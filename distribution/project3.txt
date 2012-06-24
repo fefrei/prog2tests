@@ -28,3 +28,8 @@ prog2|project3|tests|
 -MarkusFormulaReaderTest.java
 -MarkusFormulaReader.java
 FormulaReaderMarkusTest.java
+
+:1
+# Beta-Channel
+prog2|project3|tests|
+TseitinFelixTest.java
