@@ -33,5 +33,6 @@ FormulaReaderMarkusTest.java
 # Beta-Channel
 prog2|project3|tests|
 TseitinFelixTest.java
+TestUtilFelix.java
 examples|Felix|
 TseitinFelixTestData1.txt
