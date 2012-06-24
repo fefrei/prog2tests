@@ -4,18 +4,6 @@ SatSolverTestUpdateTool.java
 FormulaReaderBewiedTest.java
 MarkusBonus1Test.java
 
-# Old location for Marcus' files.
-# Remove when new version get's online.
-Markus001.txt
-Markus002.txt
-Markus003.txt
-Markus004.txt
-Markus005.txt
-Markus006.txt
-Markus007.txt
-Markus008.txt
-Markus009.txt
-
 # New location for Marcus' tests.
 examples|Markus|
 Markus001.txt
