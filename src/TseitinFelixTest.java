@@ -12,7 +12,7 @@ import prog2.project3.propositional.FormulaReader;
 import prog2.project3.propositional.PropositionalFormula;
 
 public class TseitinFelixTest {
-	static final String VERSION = "1.1";
+	static final String VERSION = "1.2";
 
 	// @Test
 	// public void testGenerateTestData() {
@@ -52,8 +52,9 @@ public class TseitinFelixTest {
 		List<String> testData = TestUtilFelix
 				.parseDataFile("examples|Felix|TseitinFelixTestData1.txt");
 		if (testData.size() != 94 * 3)
-			fail("TseitinFelixTestData1.txt has wrong size or could not be read.\n"
-					+ "If you don't know what is causing this, file a support ticket.");
+			fail("TseitinFelixTestData1.txt has wrong size or could not be read.\n" +
+					"You can simply delete it to fetch a new copy.\n"
+					+ "If you cannot solve this problem, file a support ticket.");
 
 		List<Integer> failedTests = new LinkedList<Integer>();
 		List<String> failureMessages = new LinkedList<String>();
