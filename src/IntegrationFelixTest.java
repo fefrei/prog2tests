@@ -12,7 +12,7 @@ import prog2.project3.propositional.FormulaReader;
 import prog2.project3.propositional.PropositionalFormula;
 
 public class IntegrationFelixTest {
-	static final String VERSION = "1.0";
+	static final String VERSION = "1.0.1";
 
 	@Test
 	public void test_Update() {
@@ -26,7 +26,7 @@ public class IntegrationFelixTest {
 	@Test
 	public void testIntegrationSat1() {
 		List<String> testData = TestUtilFelix
-				.parseDataFile("examples|Felix|IntegrationFelixTestSat1.txt");
+				.parseDataFile("examples|Fabian|IntegrationFelixTestSat1.txt");
 		if (testData.size() != 132864)
 			fail("IntegrationFelixTestSat1.txt has wrong size or could not be read.\n"
 					+ "You can simply delete it to fetch a new copy.\n"
@@ -50,7 +50,7 @@ public class IntegrationFelixTest {
 	@Test
 	public void testIntegrationUnSat1() {
 		List<String> testData = TestUtilFelix
-				.parseDataFile("examples|Felix|IntegrationFelixTestUnSat1.txt");
+				.parseDataFile("examples|Fabian|IntegrationFelixTestUnSat1.txt");
 		if (testData.size() != 19862)
 			fail("IntegrationFelixTestUnSat1.txt has wrong size or could not be read.\n"
 					+ "You can simply delete it to fetch a new copy.\n"
