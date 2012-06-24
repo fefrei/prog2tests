@@ -17,7 +17,7 @@ import prog2.project3.cnf.Cnf;
 import prog2.project3.cnf.Literal;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.0.1";
+	static final String VERSION = "1.1";
 
 	@Test
 	public void test_Update() {
@@ -39,11 +39,17 @@ public class TestUtilFelix {
 		return buf.toString();
 	}
 
+	/*
+	 * Returns a string representation of a Literal object.
+	 */
 	public static String literalToString(Literal lit) {
 		return lit.isNegatedLiteral() ? "~" + lit.getVariable().getName() : lit
 				.getVariable().getName();
 	}
 
+	/*
+	 * Returns a string representation of a Clause object.
+	 */
 	public static String clauseToString(Clause clause) {
 		Collection<Literal> literals = clause.getLiterals();
 		List<String> literalStrings = new LinkedList<String>();
@@ -55,6 +61,9 @@ public class TestUtilFelix {
 		return "(" + combineStrings(literalStrings, " \\/ ") + ")";
 	}
 
+	/*
+	 * Returns a string representation of a Cnf object.
+	 */
 	public static String cnfToString(Cnf cnf) {
 		Collection<Clause> clauses = cnf.getClauses();
 		List<String> clauseStrings = new LinkedList<String>();
@@ -87,10 +96,11 @@ public class TestUtilFelix {
 		}
 	}
 
+	/*
+	 * Generates a valid formula.
+	 * Length sets an upper limit to how complex the formula will be.
+	 */
 	public static String generateRandomFormula(int length) {
-		// generates a valid formula
-		// length sets an upper limit to how complex the formula will be
-
 		int remainingLength = length * 3;
 
 		if (length < 1 || length > 26)
@@ -132,6 +142,10 @@ public class TestUtilFelix {
 		return buf.toString();
 	}
 
+	/*
+	 * Fails and prints the given list and messages.
+	 * Only pronts a reasonable amount of messages.
+	 */
 	public static void failAndExplain(String testName, int testCount,
 			Integer[] failedTests, String[] failureMessages) {
 
@@ -166,8 +180,8 @@ public class TestUtilFelix {
 		if (failureMessages.length > 0) {
 			System.out.println("Some subtests left a message for you:");
 			for (int i = 0; i < Math.min(failedTests.length, 3); i++) {
-				System.out
-						.println("\nMessage " + (i + 1) + ": ______________________________________");
+				System.out.println("\nMessage " + (i + 1)
+						+ ": ______________________________________");
 				System.out.println(failureMessages[i]);
 			}
 			if (failedTests.length > 3) {
@@ -186,6 +200,50 @@ public class TestUtilFelix {
 				+ " subtest(s) of this test.\nSee the console for details.");
 	}
 
+	/*
+	 * Fails and prints the given list and messages.
+	 * Only pronts a reasonable amount of messages.
+	 */
+	public static void failAndExplain(String testName, int testCount,
+			List<Integer> failedTests, List<String> failureMessages) {
+		failAndExplain(testName, testCount,
+				failedTests.toArray(new Integer[0]),
+				failureMessages.toArray(new String[0]));
+	}
+
+	/*
+	 * Fails if results contains a string that is not null.
+	 * Prints beautiful error messages.
+	 */
+	public static void checkFailAndExplain(String testName, String[] results) {
+		int testCount = results.length;
+
+		List<Integer> failedTests = new LinkedList<Integer>();
+		List<String> failureMessages = new LinkedList<String>();
+
+		for (int i = 0; i < testCount; i++) {
+			if (results[i] != null) {
+				failedTests.add(i + 1);
+				failureMessages.add(results[i]);
+			}
+		}
+
+		if (failedTests.size() > 0) {
+			failAndExplain(testName, testCount, failedTests, failureMessages);
+		}
+	}
+
+	/*
+	 * Fails if results contains a string that is not null.
+	 * Prints beautiful error messages.
+	 */
+	public static void checkFailAndExplain(String testName, List<String> results) {
+		checkFailAndExplain(testName, results.toArray(new String[0]));
+	}
+
+	/*
+	 * reads a file, returning a string list
+	 */
 	public static List<String> parseDataFile(String pathToFile) {
 		pathToFile = pathToFile.replace('|', File.separatorChar);
 		File file = new File(pathToFile);
