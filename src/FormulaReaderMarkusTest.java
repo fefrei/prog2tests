@@ -22,6 +22,8 @@ import prog2.project3.propositional.PropositionalFormula;
 import junit.framework.TestCase;
 
 public class FormulaReaderMarkusTest extends TestCase {
+	private static final String examplesPath = "examples" + File.separator + "Markus" + File.separator;
+	
 	@Before
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -114,7 +116,7 @@ public class FormulaReaderMarkusTest extends TestCase {
 		// IOException fehlt, da schlecht reproduzierbar. Diese sollte aber
 		// automatisch beim Lesen geworfen werden.
 		try {
-			FormulaReader.readFormulaFromFile("does_not_exist.file");
+			FormulaReader.readFormulaFromFile("this_file_hopefully_does_not_exist.verylongfileextension");
 			fail("FileNotFoundException fehlt.");
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
@@ -139,7 +141,9 @@ public class FormulaReaderMarkusTest extends TestCase {
 	@Test
 	public void testReadFormulaFromFile_Examples() {
 		// Die Beispiele lesen
-		final String fnf = "Der \"examples\"-Ordner muss im Hauptverzeichnis des Projekts (\"satsolver\") liegen";
+		final String fnf = "Die \"Markus00x\"-Dateien wurden fehlerhaft" +
+				  " heruntergeladen. Bitte lasse das UpdateTool laufen," +
+				  " oder erstelle ein Support-Ticket.";
 		try {
 			FormulaReader.readFormulaFromFile("examples" + File.separator
 					+ "empty.txt");
@@ -208,60 +212,43 @@ public class FormulaReaderMarkusTest extends TestCase {
 	@Test
 	public void testReadFormulaFromFile_Markus() {
 		// Eigene Tests, die gleichen Daten wie in testReadFormularFromString
-		final String fnf = "Die \"Markus00x\"-Dateien müssen im test-Verzeichnis (\"satsolver"
-				+ File.separator
-				+ "prog2"
-				+ File.separator
-				+ "project3"
-				+ File.separator + "tests\") liegen";
+		final String fnf = "Die \"Markus00x\"-Dateien wurden fehlerhaft" +
+				  " heruntergeladen. Bitte lasse das UpdateTool laufen," +
+				  " oder erstelle ein Support-Ticket.";
 
-		checkCauseFile("prog2" + File.separator + "project3" + File.separator
-				+ "tests" + File.separator + "Markus001.txt",
+		checkCauseFile(examplesPath + "Markus001.txt",
 				IncorrectFormulaException.Cause.MISSINGOPERAND, fnf);
-		checkCauseFile("prog2" + File.separator + "project3" + File.separator
-				+ "tests" + File.separator + "Markus002.txt",
+		checkCauseFile(examplesPath + "Markus002.txt",
 				IncorrectFormulaException.Cause.INCORRECTIDENTIFIER, fnf);
-		checkCauseFile("prog2" + File.separator + "project3" + File.separator
-				+ "tests" + File.separator + "Markus003.txt",
+		checkCauseFile(examplesPath + "Markus003.txt",
 				IncorrectFormulaException.Cause.MISSINGOPERATOR, fnf);
-		checkCauseFile("prog2" + File.separator + "project3" + File.separator
-				+ "tests" + File.separator + "Markus004.txt",
+		checkCauseFile(examplesPath + "Markus004.txt",
 				IncorrectFormulaException.Cause.INCORRECTIDENTIFIER, fnf);
 		assertEquals(
 				"Wrong result (!)",
 				"(! (! a))",
-				readFileFormula("prog2" + File.separator + "project3"
-						+ File.separator + "tests" + File.separator
-						+ "Markus005.txt", fnf));
+				readFileFormula(examplesPath + "Markus005.txt", fnf));
 		assertEquals(
 				"Wrong result (=>/<=>)",
 				"((a => b) <=> (b => c))",
-				readFileFormula("prog2" + File.separator + "project3"
-						+ File.separator + "tests" + File.separator
-						+ "Markus006.txt", fnf));
+				readFileFormula(examplesPath + "Markus006.txt", fnf));
 		assertEquals(
 				"Wrong result",
 				"a",
-				readFileFormula("prog2" + File.separator + "project3"
-						+ File.separator + "tests" + File.separator
-						+ "Markus007.txt", fnf));
+				readFileFormula(examplesPath + "Markus007.txt", fnf));
 		assertEquals(
 				"Wrong result",
 				"((((((a || b) || c) || d) && e) || f) && g)",
-				readFileFormula("prog2" + File.separator + "project3"
-						+ File.separator + "tests" + File.separator
-						+ "Markus008.txt", fnf));
+				readFileFormula(examplesPath + "Markus008.txt", fnf));
 		assertEquals(
 				"Wrong result",
 				"(((a => b) <=> (a || b)) && ((A => B) <=> (A || B)))",
-				readFileFormula("prog2" + File.separator + "project3"
-						+ File.separator + "tests" + File.separator
-						+ "Markus009.txt", fnf));
+				readFileFormula(examplesPath + "Markus009.txt", fnf));
 	}
 
 	@Test
 	public void test_Update() {
 		SatSolverTestUpdateTool
-				.doUpdateTest("FormulaReaderMarkusTest", "1.1");
+				.doUpdateTest("FormulaReaderMarkusTest", "1.1.1");
 	}
 }
