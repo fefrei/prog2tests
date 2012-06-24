@@ -17,7 +17,7 @@ import prog2.project3.cnf.Cnf;
 import prog2.project3.cnf.Literal;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.1";
+	static final String VERSION = "1.1.1";
 
 	@Test
 	public void test_Update() {
@@ -152,7 +152,7 @@ public class TestUtilFelix {
 		System.out.println("_________________________________________________");
 		System.out.println("FAILURE: You failed the test " + testName + ".");
 		System.out.println("This test has " + testCount + " subtests.");
-		System.out.println("Your failed " + failedTests.length
+		System.out.println("You failed " + failedTests.length
 				+ " subtest(s) and passed " + (testCount - failedTests.length)
 				+ " subtest(s).\n");
 		if (failedTests.length > testCount * 0.2) {
