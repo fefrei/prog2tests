@@ -3,10 +3,12 @@ package prog2.project3.tests;
 /*
  * Benötigt: 
  * - Beispieldateien in satsolver/examples/
- * - Markus001.txt - Markus009.txt in satsolver/prog2/project3/tests/
- *   (selbes Verzeichnis wie *Test.java)
+ * - Markus001.txt - Markus009.txt in satsolver/examples/Markus
+ * 
+ * EDIT: Moved them around to examples/Markus, and made pathnames independent.
  */
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -41,22 +43,27 @@ public class FormulaReaderMarkusTest extends TestCase {
 	}
 
 	// Überprüft Fehlermeldungen
-	private void checkCause(String input, IncorrectFormulaException.Cause expected) {
+	private void checkCause(String input,
+			IncorrectFormulaException.Cause expected) {
 		try {
 			FormulaReader.readFormulaFromString(input);
-			fail("FormulaFromString didn't throw exception "+expected+" for \"" + input+"\"");
+			fail("FormulaFromString didn't throw exception " + expected
+					+ " for \"" + input + "\"");
 		} catch (IncorrectFormulaException e) {
-			assertEquals("Wrong exception cause: " + input, expected, e.getReason());
+			assertEquals("Wrong exception cause: " + input, expected,
+					e.getReason());
 		}
 	}
 
-	private void checkCauseFile(String file, IncorrectFormulaException.Cause expected,
-			String notFound) {
+	private void checkCauseFile(String file,
+			IncorrectFormulaException.Cause expected, String notFound) {
 		try {
 			readFileFormula(file, notFound);
-			fail("FormulaFromString didn't throw exception "+expected+" for " + file);
+			fail("FormulaFromString didn't throw exception " + expected
+					+ " for " + file);
 		} catch (IncorrectFormulaException e) {
-			assertEquals("Wrong exception cause: " + file, expected, e.getReason());
+			assertEquals("Wrong exception cause: " + file, expected,
+					e.getReason());
 		}
 	}
 
@@ -134,7 +141,8 @@ public class FormulaReaderMarkusTest extends TestCase {
 		// Die Beispiele lesen
 		final String fnf = "Der \"examples\"-Ordner muss im Hauptverzeichnis des Projekts (\"satsolver\") liegen";
 		try {
-			FormulaReader.readFormulaFromFile("examples/empty.txt");
+			FormulaReader.readFormulaFromFile("examples" + File.separator
+					+ "empty.txt");
 			fail("empty.txt: Keine Exception");
 		} catch (FileNotFoundException e) {
 			fail(fnf);
@@ -142,13 +150,16 @@ public class FormulaReaderMarkusTest extends TestCase {
 			assertEquals("False exception cause: empty.txt", e.getReason(),
 					IncorrectFormulaException.Cause.EMPTYFORMULA);
 		} catch (IOException e) {
-			fail("IOException");
+			throw new RuntimeException(e);
 		}
 
 		try {
-			assertEquals("linebreakformula.txt", FormulaReader
-					.readFormulaFromFile("examples/linebreakformula.txt")
-					.toString(), "(a && b)");
+			assertEquals(
+					"linebreakformula.txt",
+					FormulaReader.readFormulaFromFile(
+							"examples" + File.separator
+									+ "linebreakformula.txt").toString(),
+					"(a && b)");
 		} catch (FileNotFoundException e) {
 			fail(fnf);
 		} catch (IOException e) {
@@ -156,8 +167,10 @@ public class FormulaReaderMarkusTest extends TestCase {
 		}
 
 		try {
-			assertEquals("simple.txt",
-					FormulaReader.readFormulaFromFile("examples/simple.txt")
+			assertEquals(
+					"simple.txt",
+					FormulaReader.readFormulaFromFile(
+							"examples" + File.separator + "simple.txt")
 							.toString(), "((! (hallo && welt)) || java)");
 		} catch (FileNotFoundException e) {
 			fail(fnf);
@@ -166,9 +179,13 @@ public class FormulaReaderMarkusTest extends TestCase {
 		}
 
 		try {
-			assertEquals("simpleLinebreak.txt", FormulaReader
-					.readFormulaFromFile("examples/simpleLinebreak.txt")
-					.toString(), "((a && (! b)) || c)");
+			assertEquals(
+					"simpleLinebreak.txt",
+					FormulaReader
+							.readFormulaFromFile(
+									"examples" + File.separator
+											+ "simpleLinebreak.txt").toString(),
+					"((a && (! b)) || c)");
 		} catch (FileNotFoundException e) {
 			fail(fnf);
 		} catch (IOException e) {
@@ -179,8 +196,8 @@ public class FormulaReaderMarkusTest extends TestCase {
 			assertEquals(
 					"simpleSpace.txt",
 					FormulaReader.readFormulaFromFile(
-							"examples/simpleSpace.txt").toString(),
-					"(((! ((! a) && (! b))) || c) => d)");
+							"examples" + File.separator + "simpleSpace.txt")
+							.toString(), "(((! ((! a) && (! b))) || c) => d)");
 		} catch (FileNotFoundException e) {
 			fail(fnf);
 		} catch (IOException e) {
@@ -191,32 +208,60 @@ public class FormulaReaderMarkusTest extends TestCase {
 	@Test
 	public void testReadFormulaFromFile_Markus() {
 		// Eigene Tests, die gleichen Daten wie in testReadFormularFromString
-		final String fnf = "Die \"Markus00x\"-Dateien müssen im test-Verzeichnis (\"satsolver/prog2/project3/tests\") liegen";
+		final String fnf = "Die \"Markus00x\"-Dateien müssen im test-Verzeichnis (\"satsolver"
+				+ File.separator
+				+ "prog2"
+				+ File.separator
+				+ "project3"
+				+ File.separator + "tests\") liegen";
 
-		checkCauseFile("prog2/project3/tests/Markus001.txt",
+		checkCauseFile("prog2" + File.separator + "project3" + File.separator
+				+ "tests" + File.separator + "Markus001.txt",
 				IncorrectFormulaException.Cause.MISSINGOPERAND, fnf);
-		checkCauseFile("prog2/project3/tests/Markus002.txt",
+		checkCauseFile("prog2" + File.separator + "project3" + File.separator
+				+ "tests" + File.separator + "Markus002.txt",
 				IncorrectFormulaException.Cause.INCORRECTIDENTIFIER, fnf);
-		checkCauseFile("prog2/project3/tests/Markus003.txt",
+		checkCauseFile("prog2" + File.separator + "project3" + File.separator
+				+ "tests" + File.separator + "Markus003.txt",
 				IncorrectFormulaException.Cause.MISSINGOPERATOR, fnf);
-		checkCauseFile("prog2/project3/tests/Markus004.txt",
+		checkCauseFile("prog2" + File.separator + "project3" + File.separator
+				+ "tests" + File.separator + "Markus004.txt",
 				IncorrectFormulaException.Cause.INCORRECTIDENTIFIER, fnf);
-		assertEquals("Wrong result (!)", "(! (! a))",
-				readFileFormula("prog2/project3/tests/Markus005.txt", fnf));
-		assertEquals("Wrong result (=>/<=>)", "((a => b) <=> (b => c))",
-				readFileFormula("prog2/project3/tests/Markus006.txt", fnf));
-		assertEquals("Wrong result", "a",
-				readFileFormula("prog2/project3/tests/Markus007.txt", fnf));
-		assertEquals("Wrong result",
+		assertEquals(
+				"Wrong result (!)",
+				"(! (! a))",
+				readFileFormula("prog2" + File.separator + "project3"
+						+ File.separator + "tests" + File.separator
+						+ "Markus005.txt", fnf));
+		assertEquals(
+				"Wrong result (=>/<=>)",
+				"((a => b) <=> (b => c))",
+				readFileFormula("prog2" + File.separator + "project3"
+						+ File.separator + "tests" + File.separator
+						+ "Markus006.txt", fnf));
+		assertEquals(
+				"Wrong result",
+				"a",
+				readFileFormula("prog2" + File.separator + "project3"
+						+ File.separator + "tests" + File.separator
+						+ "Markus007.txt", fnf));
+		assertEquals(
+				"Wrong result",
 				"((((((a || b) || c) || d) && e) || f) && g)",
-				readFileFormula("prog2/project3/tests/Markus008.txt", fnf));
-		assertEquals("Wrong result",
+				readFileFormula("prog2" + File.separator + "project3"
+						+ File.separator + "tests" + File.separator
+						+ "Markus008.txt", fnf));
+		assertEquals(
+				"Wrong result",
 				"(((a => b) <=> (a || b)) && ((A => B) <=> (A || B)))",
-				readFileFormula("prog2/project3/tests/Markus009.txt", fnf));
+				readFileFormula("prog2" + File.separator + "project3"
+						+ File.separator + "tests" + File.separator
+						+ "Markus009.txt", fnf));
 	}
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("FormulaReaderMarkusTest", "1.0.3");
+		SatSolverTestUpdateTool
+				.doUpdateTest("FormulaReaderMarkusTest", "1.1");
 	}
 }
