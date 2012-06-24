@@ -43,6 +43,14 @@ Markus008.txt
 Markus009.txt
 
 :1
+# Beta: new Felix-Test
+prog2|project3|tests|
+IntegrationFelixTest.java
+examples|Felix|
+IntegrationFelixTestSat1.txt
+IntegrationFelixTestUnSat1.txt
+
+:1
 # Beta: Remove old Markus-Files
 prog2|project3|tests|
 -Markus001.txt
