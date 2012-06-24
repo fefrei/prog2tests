@@ -23,6 +23,7 @@ import org.junit.Test;
 import prog2.project3.cnf.Clause;
 import prog2.project3.cnf.Cnf;
 import prog2.project3.cnf.Literal;
+import prog2.project3.cnf.TruthValue;
 import prog2.project3.cnf.Variable;
 
 public class CnfFactoryBewiedTest {
@@ -118,7 +119,8 @@ public class CnfFactoryBewiedTest {
 		}, new Runnable() {
 			public void run() {
 				Literal a = new PhonyBewiedLiteral("a", true);
-				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()), false);
+				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
+						false);
 				createClause(a, a2);
 			}
 		}, new Runnable() {
@@ -130,7 +132,8 @@ public class CnfFactoryBewiedTest {
 		}, new Runnable() {
 			public void run() {
 				Literal a = new PhonyBewiedLiteral("a", true);
-				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()), false);
+				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
+						false);
 				Literal b = new PhonyBewiedLiteral("b", true);
 				createClause(a, b, a2);
 				// I can't think of any other "special" cases that should fail.
@@ -171,7 +174,7 @@ public class CnfFactoryBewiedTest {
 		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseGood",
 				NoException.class);
 	}
-	
+
 	@Test
 	public final void testCreateVariable() {
 		Variable a1 = createVariable("a"), a2 = createVariable("a");
@@ -179,18 +182,18 @@ public class CnfFactoryBewiedTest {
 			fail("createVariable() MUST return non-identical instances.");
 		}
 		if (a1.hashCode() == a2.hashCode() || a1.equals(a2)) {
-			System.out.println("\nIf you use Object.hashCode() and" +
-					  " Object.equals() for Variable, then everything will be" +
-					  " okay, according to Tobias.\n" +
-					  "Note that this doesn't mean your implementation is" +
-					  " wrong. But think about this: Doing nothing is a" +
-					  " granted win. Your implementation might or might not" +
-					  " fail.\nWhat's easier?\n");
+			System.out.println("\nIf you use Object.hashCode() and"
+					+ " Object.equals() for Variable, then everything will be"
+					+ " okay, according to Tobias.\n"
+					+ "Note that this doesn't mean your implementation is"
+					+ " wrong. But think about this: Doing nothing is a"
+					+ " granted win. Your implementation might or might not"
+					+ " fail.\nWhat's easier?\n");
 		}
 	}
-	
+
 	// ===== Internals =====
-	
+
 	public static final <T> Set<T> collect(T[] from) {
 		Set<T> ret = new LinkedHashSet<T>();
 		for (T t : from) {
@@ -206,7 +209,7 @@ public class CnfFactoryBewiedTest {
 			throw new NoException();
 		}
 	}
-	
+
 	public static final Cnf spoof(Cnf c) {
 		Set<Clause> orig = c.getClauses();
 		Set<Clause> spoofed = new HashSet<Clause>();
@@ -215,7 +218,7 @@ public class CnfFactoryBewiedTest {
 		}
 		return new PhonyBewiedCnf(spoofed);
 	}
-	
+
 	public static final Clause spoof(Clause c) {
 		Set<Literal> orig = c.getLiterals();
 		Set<Literal> spoofed = new HashSet<Literal>();
@@ -224,11 +227,12 @@ public class CnfFactoryBewiedTest {
 		}
 		return new PhonyBewiedClause(spoofed);
 	}
-	
+
 	public static final Literal spoof(Literal l) {
-		return new PhonyBewiedLiteral(spoof(l.getVariable()), l.isNegatedLiteral());
+		return new PhonyBewiedLiteral(spoof(l.getVariable()),
+				l.isNegatedLiteral());
 	}
-	
+
 	public static final Variable spoof(Variable v) {
 		return new PhonyBewiedVariable(v);
 	}
@@ -245,7 +249,7 @@ public class CnfFactoryBewiedTest {
 		for (int i = 0; i < tests.length; i++) {
 			String s = assertException(tests[i], clazz);
 			if (s != null) {
-				reasons.add("#"+i+": "+s);
+				reasons.add("#" + i + ": " + s);
 				indices.add(i);
 			}
 		}
@@ -320,8 +324,227 @@ public class CnfFactoryBewiedTest {
 		void test(T input);
 	}
 
+	// ===== Classes =====
+
+	public static final class PhonyBewiedClause extends Clause {
+		public PhonyBewiedClause(Collection<Literal> literals) {
+			super(literals);
+		}
+
+		public PhonyBewiedClause(Literal... literals) {
+			super(CnfFactoryBewiedTest.collect(literals));
+		}
+
+		@Override
+		public TruthValue getLastTruthValue() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Collection<Variable> getVariables() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Literal getUnitClauseLiteral() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void updateTruthValue() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Literal getPureLiteral() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public static final class PhonyBewiedCnf extends Cnf {
+		private final Set<Clause> clauses;
+
+		public PhonyBewiedCnf(Set<Clause> clauses) {
+			this.clauses = clauses;
+		}
+
+		public PhonyBewiedCnf(Clause... clauses) {
+			this.clauses = CnfFactoryBewiedTest.collect(clauses);
+		}
+
+		@Override
+		public TruthValue getTruthValue() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Set<Clause> getClauses() {
+			return clauses;
+		}
+
+		@Override
+		public Collection<Variable> getVariables() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void resetAllVariables() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Variable getVariableForName(String name) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Literal getUnitClauseLiteral() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Literal getPureLiteral() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public static final class PhonyBewiedLiteral extends Literal {
+		private final Variable v;
+		private final boolean negated;
+
+		public PhonyBewiedLiteral(String name, boolean negated) {
+			this.v = new PhonyBewiedVariable(name);
+			this.negated = negated;
+		}
+
+		public PhonyBewiedLiteral(Variable v, boolean negated) {
+			this.v = v;
+			this.negated = negated;
+		}
+
+		@Override
+		public TruthValue getTruthValue() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void chooseSatisfyingAssignment() {
+			// IGNORED
+		}
+
+		@Override
+		public Variable getVariable() {
+			return v;
+		}
+
+		@Override
+		public void addParentClause(Clause clause) {
+			// IGNORED
+		}
+
+		@Override
+		public boolean isNegatedLiteral() {
+			return negated;
+		}
+
+		@Override
+		public boolean isPure() {
+			return false;
+		}
+
+		@Override
+		public void addDependentClause(Clause clause) {
+			// IGNORED
+		}
+
+		@Override
+		public void removeDependentClause(Clause clause) {
+			// IGNORED
+		}
+	}
+
+	public static final class PhonyBewiedVariable implements Variable {
+		private final String name;
+		private final int hashCode;
+
+		public PhonyBewiedVariable(String name) {
+			this.name = name;
+			hashCode = super.hashCode();
+		}
+
+		public PhonyBewiedVariable(Variable v) {
+			this.name = v.getName();
+			hashCode = v.hashCode();
+		}
+
+		@Override
+		public int hashCode() {
+			return hashCode;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public void setTruthValue(TruthValue newValue) {
+			// IGNORED
+		}
+
+		@Override
+		public TruthValue getTruthValue() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void negateValue() {
+			// IGNORED
+		}
+
+		@Override
+		public void addParentClause(Clause clause) {
+			// IGNORED
+		}
+
+		@Override
+		public Set<Clause> getParentClauses() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void addDependentClausePos(Clause clause) {
+			// IGNORED
+		}
+
+		@Override
+		public void removeDependentClausePos(Clause clause) {
+			// IGNORED
+		}
+
+		@Override
+		public boolean isPurePositive() {
+			return false;
+		}
+
+		@Override
+		public void addDependentClauseNeg(Clause clause) {
+			// IGNORED
+		}
+
+		@Override
+		public void removeDependentClauseNeg(Clause clause) {
+			// IGNORED
+		}
+
+		@Override
+		public boolean isPureNegative() {
+			return false;
+		}
+	}
+
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.0");
+		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.1");
 	}
 }
