@@ -12,7 +12,7 @@ import prog2.project3.propositional.FormulaReader;
 import prog2.project3.propositional.PropositionalFormula;
 
 public class TseitinFelixTest {
-	static final String VERSION = "1.0.1"; 
+	static final String VERSION = "1.0.2"; 
 	
 	// @Test
 	// public void testGenerateTestData() {
@@ -80,7 +80,7 @@ public class TseitinFelixTest {
 						+ "\nThen, I called PropositionalFormula.getConjunctiveNormalForm on that. You returned:\n"
 						+ cnfString
 						+ "\nHowever, the expected result is:\n"
-						+ cnfString
+						+ expectedCnfString
 						+ "\nPlease, check PropositionalFormula.getConjunctiveNormalForm for errors.");
 				continue;
 			}
