@@ -44,6 +44,11 @@ Bonus1FelixTest.java
 examples|Felix|
 Bonus1FelixTestData1.txt
 
+:1
+# Also Beta
+prog2|project3|tests|
+CnfFactoryBewiedTest.java
+
 :2000
 # For now, don't delete them.
 prog2|project3|tests|
