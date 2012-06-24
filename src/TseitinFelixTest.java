@@ -12,7 +12,7 @@ import prog2.project3.propositional.FormulaReader;
 import prog2.project3.propositional.PropositionalFormula;
 
 public class TseitinFelixTest {
-	static final String VERSION = "1.0"; 
+	static final String VERSION = "1.0.1"; 
 	
 	// @Test
 	// public void testGenerateTestData() {
@@ -61,19 +61,19 @@ public class TseitinFelixTest {
 			if (!expectedFormulaOutString.equals(formulaOutString)) {
 				failedTests.add(testID);
 				failureMessages
-						.add("I called FormulaReader.readFormulaFromString with this argument:\n"
+						.add("Test " + testID + " called FormulaReader.readFormulaFromString with this argument:\n"
 								+ formulaString
 								+ "\nYou parsed that to a formula where toString returns this:\n"
 								+ formulaOutString
-								+ "\nHowever, the expected result ist this:\n"
+								+ "\nHowever, the expected result is:\n"
 								+ expectedFormulaOutString
 								+ "\nPlease, check FormulaReader.readFormulaFromString and PropositionalFormula.toString for errors.");
-				break;
+				continue;
 			}
 			if (!expectedCnfString.equals(cnfString)) {
 				failedTests.add(testID);
 				failureMessages
-				.add("I called FormulaReader.readFormulaFromString with this argument:\n"
+				.add("Test " + testID + " called FormulaReader.readFormulaFromString with this argument:\n"
 						+ formulaString
 						+ "\nYou correctly parsed that to a formula where toString returns this:\n"
 						+ formulaOutString
@@ -82,7 +82,7 @@ public class TseitinFelixTest {
 						+ "\nHowever, the expected result is:\n"
 						+ cnfString
 						+ "\nPlease, check PropositionalFormula.getConjunctiveNormalForm for errors.");
-				break;
+				continue;
 			}
 		}
 
