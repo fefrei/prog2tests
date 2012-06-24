@@ -17,7 +17,7 @@ import prog2.project3.cnf.Cnf;
 import prog2.project3.cnf.Literal;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.0";
+	static final String VERSION = "1.0.1";
 
 	@Test
 	public void test_Update() {
@@ -139,8 +139,8 @@ public class TestUtilFelix {
 		System.out.println("FAILURE: You failed the test " + testName + ".");
 		System.out.println("This test has " + testCount + " subtests.");
 		System.out.println("Your failed " + failedTests.length
-				+ " test and passed " + (testCount - failedTests.length)
-				+ " test(s).\n");
+				+ " subtest(s) and passed " + (testCount - failedTests.length)
+				+ " subtest(s).\n");
 		if (failedTests.length > testCount * 0.2) {
 			System.out
 					.println("This indicates that there is a general problem "
@@ -164,21 +164,21 @@ public class TestUtilFelix {
 		System.out.println(".\n");
 
 		if (failureMessages.length > 0) {
-			System.out.println("Some subtests left a message for you:\n");
+			System.out.println("Some subtests left a message for you:");
 			for (int i = 0; i < Math.min(failedTests.length, 3); i++) {
 				System.out
-						.println("Message 1: ______________________________________");
+						.println("\nMessage " + (i + 1) + ": ______________________________________");
 				System.out.println(failureMessages[i]);
 			}
 			if (failedTests.length > 3) {
 				System.out
-						.println("Information: ____________________________________");
+						.println("\nInformation: ____________________________________");
 				System.out.print((failureMessages.length - 3)
 						+ " more message(s) were not printed.");
 			}
 		}
 
-		System.out.println("End of failure message for test " + testName);
+		System.out.println("\nEnd of failure message for test " + testName);
 		System.out.println("_________________________________________________");
 		System.out.println("\n");
 
