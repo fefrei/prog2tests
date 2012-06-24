@@ -29,10 +29,9 @@ prog2|project3|tests|
 -MarkusFormulaReader.java
 FormulaReaderMarkusTest.java
 
-:1
-# Beta-Channel
+# Tests von Felix
 prog2|project3|tests|
-TseitinFelixTest.java
 TestUtilFelix.java
+TseitinFelixTest.java
 examples|Felix|
 TseitinFelixTestData1.txt
