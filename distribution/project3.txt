@@ -46,7 +46,7 @@ Markus009.txt
 # Beta: new Felix-Test
 prog2|project3|tests|
 IntegrationFelixTest.java
-examples|Felix|
+examples|Fabian|
 IntegrationFelixTestSat1.txt
 IntegrationFelixTestUnSat1.txt
 
