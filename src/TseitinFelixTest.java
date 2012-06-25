@@ -10,9 +10,10 @@ import org.junit.Test;
 import prog2.project3.cnf.Cnf;
 import prog2.project3.propositional.FormulaReader;
 import prog2.project3.propositional.PropositionalFormula;
+import prog2.project3.propositional.VariableNameGenerator;
 
 public class TseitinFelixTest {
-	static final String VERSION = "1.3";
+	static final String VERSION = "1.3.1";
 
 	// @Test
 	// public void testGenerateTestData() {
@@ -59,6 +60,8 @@ public class TseitinFelixTest {
 		List<String> results = new LinkedList<String>();
 
 		for (int testID = 1; testID <= 94; testID++) {
+			VariableNameGenerator.reset();
+			
 			String formulaString = testData.get((testID - 1) * 3);
 			String expectedFormulaOutString = testData
 					.get((testID - 1) * 3 + 1);
