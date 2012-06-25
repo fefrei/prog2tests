@@ -20,9 +20,13 @@ prog2|project3|tests|
 TestUtilFelix.java
 TseitinFelixTest.java
 Bonus1FelixTest.java
+IntegrationFelixTest.java
 examples|Felix|
 TseitinFelixTestData1.txt
 Bonus1FelixTestData1.txt
+examples|Fabian|
+IntegrationFelixTestSat1.txt
+IntegrationFelixTestUnSat1.txt
 
 # Markus' tests
 # Force-update old, broken versions of Markus' test by distributing a new one
@@ -41,14 +45,6 @@ Markus006.txt
 Markus007.txt
 Markus008.txt
 Markus009.txt
-
-:1
-# Beta: new Felix-Test
-prog2|project3|tests|
-IntegrationFelixTest.java
-examples|Fabian|
-IntegrationFelixTestSat1.txt
-IntegrationFelixTestUnSat1.txt
 
 :1
 # Beta: Remove old Markus-Files
