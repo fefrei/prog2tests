@@ -17,7 +17,7 @@ import prog2.project3.cnf.Cnf;
 import prog2.project3.cnf.Literal;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.1.2";
+	static final String VERSION = "1.1.3";
 
 	@Test
 	public void test_Update() {
@@ -148,6 +148,10 @@ public class TestUtilFelix {
 	 */
 	public static void failAndExplain(String testName, int testCount,
 			Integer[] failedTests, String[] failureMessages) {
+		
+		//feel free to change these
+		final int MAX_LIST_COUNT = 50;
+		final int MAX_MESSAGE_COUNT = 3;
 
 		System.out.println("_________________________________________________");
 		System.out.println("FAILURE: You failed the test " + testName + ".");
@@ -170,24 +174,24 @@ public class TestUtilFelix {
 						+ "https://code.google.com/p/prog2tests/issues/entry?template=support\n");
 
 		System.out.print("You failed the following subtest(s):");
-		for (int i = 0; i < Math.min(failedTests.length, 50); i++)
+		for (int i = 0; i < Math.min(failedTests.length, MAX_LIST_COUNT); i++)
 			System.out.print(" " + failedTests[i]);
-		if (failedTests.length > 50)
-			System.out.print(" (and " + (failedTests.length - 50)
+		if (failedTests.length > MAX_LIST_COUNT)
+			System.out.print(" (and " + (failedTests.length - MAX_LIST_COUNT)
 					+ "more subtest(s)");
 		System.out.println(".\n");
 
 		if (failureMessages.length > 0) {
 			System.out.println("Some subtests left a message for you:");
-			for (int i = 0; i < Math.min(failedTests.length, 3); i++) {
+			for (int i = 0; i < Math.min(failedTests.length, MAX_MESSAGE_COUNT); i++) {
 				System.out.println("\nMessage " + (i + 1)
 						+ ": ______________________________________");
 				System.out.println(failureMessages[i]);
 			}
-			if (failedTests.length > 3) {
+			if (failedTests.length > MAX_MESSAGE_COUNT) {
 				System.out
 						.println("\nInformation: ____________________________________");
-				System.out.print((failureMessages.length - 3)
+				System.out.print((failureMessages.length - MAX_MESSAGE_COUNT)
 						+ " more message(s) were not printed.");
 			}
 		}
@@ -201,7 +205,7 @@ public class TestUtilFelix {
 	}
 
 	/*
-	 * Fails and prints the given list and messages. Only pronts a reasonable
+	 * Fails and prints the given list and messages. Only prints a reasonable
 	 * amount of messages.
 	 */
 	public static void failAndExplain(String testName, int testCount,
@@ -271,5 +275,30 @@ public class TestUtilFelix {
 					"A test file could not be read. Try running the update tool again.\n"
 							+ "If that doesn't help, file a ticket.");
 		}
+	}
+	
+	private static String getString(char c, int n) {
+		StringBuilder res = new StringBuilder();
+		for (int i = 0; i < n; i++)
+			res.append(c);
+		return res.toString();
+	}
+	
+	/*
+	 * Print the "running"-bar
+	 */
+	public static void printRunning(String testName) {
+		System.out.println("\n\nRunning " + testName + "... " + getString('_', 68 - testName.length()));
+	}
+	
+	/*
+	 * Prints a progressBar with testId / totalTest percent.
+	 * Assumes that alreadyPrinted chars are already printed.
+	 * Returns a new value for alreadyPrinted.
+	 */
+	public static int updateProgressBar(int alreadyPrinted, int testID, int totalTests) {
+		int newTarget = (testID * 80) / totalTests;
+		System.out.print(getString('▄', newTarget - alreadyPrinted));
+		return newTarget;
 	}
 }
