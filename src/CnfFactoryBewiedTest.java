@@ -101,7 +101,7 @@ public class CnfFactoryBewiedTest {
 		String[] tests = new String[] { "a1", "ZuFussGehen", "z9", "foobar",
 				"A" };
 		checkTestExceptions(tests, new VariableNameTester(),
-				"CnfFactoryBewiedTest#testVariableNamesGood", NoException.class);
+				"CnfFactoryBewiedTest#testVariableNamesGood", null);
 	}
 
 	@Test
@@ -136,6 +136,37 @@ public class CnfFactoryBewiedTest {
 						false);
 				Literal b = new PhonyBewiedLiteral("b", true);
 				createClause(a, b, a2);
+			}
+		}, new Runnable() {
+			public void run() { // #5
+				createClause(new HashSet<Literal>());
+			}
+		}, new Runnable() {
+			public void run() {
+				Literal a = new PhonyBewiedLiteral("a", true);
+				Literal a2 = spoof(a);
+				createClause(collect(a, a2));
+			}
+		}, new Runnable() {
+			public void run() {
+				Literal a = new PhonyBewiedLiteral("a", true);
+				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
+						false);
+				createClause(collect(a, a2));
+			}
+		}, new Runnable() {
+			public void run() {
+				Literal a = new PhonyBewiedLiteral("a", true);
+				Literal a2 = spoof(a);
+				createClause(collect(a, a, a2));
+			}
+		}, new Runnable() {
+			public void run() {
+				Literal a = new PhonyBewiedLiteral("a", true);
+				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
+						false);
+				Literal b = new PhonyBewiedLiteral("b", true);
+				createClause(collect(a, b, a2));
 				// I can't think of any other "special" cases that should fail.
 			}
 		} };
@@ -151,7 +182,6 @@ public class CnfFactoryBewiedTest {
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = new PhonyBewiedLiteral(v, true);
 				createClause(a, a2);
-				throw new NoException();
 			}
 		}, new Runnable() {
 			public void run() {
@@ -159,7 +189,6 @@ public class CnfFactoryBewiedTest {
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = createNegativeLiteral(v);
 				createClause(a, a2);
-				throw new NoException();
 			}
 		}, new Runnable() {
 			public void run() {
@@ -167,12 +196,32 @@ public class CnfFactoryBewiedTest {
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = createPositiveLiteral(v);
 				createClause(a, a2);
-				throw new NoException();
+			}
+		}, new Runnable() {
+			public void run() {
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = new PhonyBewiedLiteral(v, true);
+				createClause(collect(a, a2));
+			}
+		}, new Runnable() {
+			public void run() {
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = createNegativeLiteral(v);
+				createClause(collect(a, a2));
+			}
+		}, new Runnable() {
+			public void run() { // #5
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = createPositiveLiteral(v);
+				createClause(collect(a, a2));
 				// I can't think of any other "special" cases
 			}
 		} };
 		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseGood",
-				NoException.class);
+				null);
 	}
 
 	@Test
@@ -194,7 +243,7 @@ public class CnfFactoryBewiedTest {
 
 	// ===== Internals =====
 
-	public static final <T> Set<T> collect(T[] from) {
+	public static final <T> Set<T> collect(T... from) {
 		Set<T> ret = new LinkedHashSet<T>();
 		for (T t : from) {
 			ret.add(t);
@@ -206,7 +255,6 @@ public class CnfFactoryBewiedTest {
 		@Override
 		public void test(String input) {
 			createVariable(input);
-			throw new NoException();
 		}
 	}
 
@@ -237,11 +285,7 @@ public class CnfFactoryBewiedTest {
 		return new PhonyBewiedVariable(v);
 	}
 
-	@SuppressWarnings("serial")
-	public static final class NoException extends RuntimeException {
-	}
-
-	protected static final void checkTestExceptions(Runnable[] tests,
+	public static final void checkTestExceptions(Runnable[] tests,
 			String method, Class<? extends RuntimeException> clazz) {
 		List<String> reasons = new LinkedList<String>();
 		List<Integer> indices = new LinkedList<Integer>();
@@ -261,7 +305,7 @@ public class CnfFactoryBewiedTest {
 		}
 	}
 
-	protected static final <T> void checkTestExceptions(T[] tests, Tester<T> t,
+	public static final <T> void checkTestExceptions(T[] tests, Tester<T> t,
 			String method, Class<? extends RuntimeException> clazz) {
 		List<String> reasons = new LinkedList<String>();
 		List<Integer> indices = new LinkedList<Integer>();
@@ -285,12 +329,20 @@ public class CnfFactoryBewiedTest {
 			Class<? extends RuntimeException> clazz) {
 		try {
 			r.run();
-			return "Expected " + clazz.getSimpleName()
-					+ " to be thrown. You threw nothing.";
+			if (clazz != null) {
+				return "Expected " + clazz.getSimpleName()
+						+ " to be thrown. You threw nothing.";
+			} else {
+				// Expected this
+				return null;
+			}
 		} catch (AssertionFailedError e) {
 			return e.getMessage();
 		} catch (RuntimeException e) {
-			if (clazz.isInstance(e)) {
+			if (clazz == null) {
+				return "Expected a clean run, you threw "
+						+ e.getClass().getSimpleName() + ": " + e.getMessage();
+			} else if (clazz.isInstance(e)) {
 				// Expected this
 				return null;
 			} else {
@@ -301,15 +353,24 @@ public class CnfFactoryBewiedTest {
 		}
 	}
 
-	public static final <T> String assertException(Tester<T> t, T input,
-			Class<? extends RuntimeException> clazz) {
+	public static final <T> String assertException(final Tester<T> t,
+			final T input, final Class<? extends RuntimeException> clazz) {
 		try {
 			t.test(input);
-			return "Expected " + clazz.getSimpleName()
-					+ " to be thrown for input \"" + input
-					+ "\". You threw nothing.";
+			if (clazz != null) {
+				return "Expected " + clazz.getSimpleName()
+						+ " to be thrown for input \"" + input
+						+ "\". You threw nothing.";
+			} else {
+				// Expected this
+				return null;
+			}
 		} catch (RuntimeException e) {
-			if (clazz.isInstance(e)) {
+			if (clazz == null) {
+				return "Expected a clean run, but for input " + input
+						+ " you threw " + e.getClass().getSimpleName() + ": "
+						+ e.getMessage();
+			} else if (clazz.isInstance(e)) {
 				// Expected this
 				return null;
 			} else {
@@ -545,6 +606,6 @@ public class CnfFactoryBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.1");
+		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.2");
 	}
 }
