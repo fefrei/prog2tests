@@ -17,7 +17,7 @@ import prog2.project3.cnf.Cnf;
 import prog2.project3.cnf.Literal;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.1.3";
+	static final String VERSION = "1.1.5";
 
 	@Test
 	public void test_Update() {
@@ -153,7 +153,7 @@ public class TestUtilFelix {
 		final int MAX_LIST_COUNT = 50;
 		final int MAX_MESSAGE_COUNT = 3;
 
-		System.out.println("_________________________________________________");
+		System.out.println("________________________________________________________________________________");
 		System.out.println("FAILURE: You failed the test " + testName + ".");
 		System.out.println("This test has " + testCount + " subtests.");
 		System.out.println("You failed " + failedTests.length
@@ -178,26 +178,26 @@ public class TestUtilFelix {
 			System.out.print(" " + failedTests[i]);
 		if (failedTests.length > MAX_LIST_COUNT)
 			System.out.print(" (and " + (failedTests.length - MAX_LIST_COUNT)
-					+ "more subtest(s)");
+					+ " more subtest(s))");
 		System.out.println(".\n");
 
 		if (failureMessages.length > 0) {
 			System.out.println("Some subtests left a message for you:");
 			for (int i = 0; i < Math.min(failedTests.length, MAX_MESSAGE_COUNT); i++) {
 				System.out.println("\nMessage " + (i + 1)
-						+ ": ______________________________________");
+						+ ": _____________________________________________________________________");
 				System.out.println(failureMessages[i]);
 			}
 			if (failedTests.length > MAX_MESSAGE_COUNT) {
 				System.out
-						.println("\nInformation: ____________________________________");
+						.println("\nInformation: ________________________________________________________");
 				System.out.print((failureMessages.length - MAX_MESSAGE_COUNT)
 						+ " more message(s) were not printed.");
 			}
 		}
 
 		System.out.println("\nEnd of failure message for test " + testName);
-		System.out.println("_________________________________________________");
+		System.out.println("________________________________________________________________________________");
 		System.out.println("\n");
 
 		fail("You failed " + failedTests.length
@@ -288,7 +288,7 @@ public class TestUtilFelix {
 	 * Print the "running"-bar
 	 */
 	public static void printRunning(String testName) {
-		System.out.println("\n\nRunning " + testName + "... " + getString('_', 68 - testName.length()));
+		System.out.println("\nRunning " + testName + "... " + getString('_', 68 - testName.length()));
 	}
 	
 	/*
@@ -299,6 +299,8 @@ public class TestUtilFelix {
 	public static int updateProgressBar(int alreadyPrinted, int testID, int totalTests) {
 		int newTarget = (testID * 80) / totalTests;
 		System.out.print(getString('▄', newTarget - alreadyPrinted));
+		if (testID == totalTests)
+			System.out.print("\n");
 		return newTarget;
 	}
 }
