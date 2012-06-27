@@ -46,8 +46,7 @@ Markus007.txt
 Markus008.txt
 Markus009.txt
 
-:1
-# Beta: Remove old Markus-Files
+# Remove old Markus-Files
 prog2|project3|tests|
 -Markus001.txt
 -Markus002.txt
