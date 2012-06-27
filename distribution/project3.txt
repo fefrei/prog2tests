@@ -2,6 +2,7 @@
 prog2|project3|tests|
 SatSolverTestUpdateTool.java
 
+
 # Given example files.
 examples|
 empty.txt
@@ -10,10 +11,12 @@ simple.txt
 simpleLinebreak.txt
 simpleSpace.txt
 
+
 # Bens Tests
 prog2|project3|tests|
 FormulaReaderBewiedTest.java
 CnfFactoryBewiedTest.java
+
 
 # Felix' Tests
 prog2|project3|tests|
@@ -21,12 +24,16 @@ TestUtilFelix.java
 TseitinFelixTest.java
 Bonus1FelixTest.java
 IntegrationFelixTest.java
+
 examples|Felix|
 TseitinFelixTestData1.txt
 Bonus1FelixTestData1.txt
+DpllPerformanceFelixTestData1.txt
+
 examples|Fabian|
 IntegrationFelixTestSat1.txt
 IntegrationFelixTestUnSat1.txt
+
 
 # Markus' tests
 # Force-update old, broken versions of Markus' test by distributing a new one
@@ -35,6 +42,7 @@ prog2|project3|tests|
 -MarkusFormulaReader.java
 FormulaReaderMarkusTest.java
 MarkusBonus1Test.java
+
 examples|Markus|
 Markus001.txt
 Markus002.txt
@@ -45,6 +53,7 @@ Markus006.txt
 Markus007.txt
 Markus008.txt
 Markus009.txt
+
 
 # Remove old Markus-Files
 prog2|project3|tests|
