@@ -3,10 +3,15 @@ package prog2.project3.tests;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -14,10 +19,12 @@ import static org.junit.Assert.*;
 
 import prog2.project3.cnf.Clause;
 import prog2.project3.cnf.Cnf;
+import prog2.project3.cnf.CnfFactory;
 import prog2.project3.cnf.Literal;
+import prog2.project3.cnf.Variable;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.1.5";
+	static final String VERSION = "1.2";
 
 	@Test
 	public void test_Update() {
@@ -148,12 +155,13 @@ public class TestUtilFelix {
 	 */
 	public static void failAndExplain(String testName, int testCount,
 			Integer[] failedTests, String[] failureMessages) {
-		
-		//feel free to change these
+
+		// feel free to change these
 		final int MAX_LIST_COUNT = 50;
 		final int MAX_MESSAGE_COUNT = 3;
 
-		System.out.println("________________________________________________________________________________");
+		System.out
+				.println("________________________________________________________________________________");
 		System.out.println("FAILURE: You failed the test " + testName + ".");
 		System.out.println("This test has " + testCount + " subtests.");
 		System.out.println("You failed " + failedTests.length
@@ -184,8 +192,10 @@ public class TestUtilFelix {
 		if (failureMessages.length > 0) {
 			System.out.println("Some subtests left a message for you:");
 			for (int i = 0; i < Math.min(failedTests.length, MAX_MESSAGE_COUNT); i++) {
-				System.out.println("\nMessage " + (i + 1)
-						+ ": _____________________________________________________________________");
+				System.out
+						.println("\nMessage "
+								+ (i + 1)
+								+ ": _____________________________________________________________________");
 				System.out.println(failureMessages[i]);
 			}
 			if (failedTests.length > MAX_MESSAGE_COUNT) {
@@ -197,7 +207,8 @@ public class TestUtilFelix {
 		}
 
 		System.out.println("\nEnd of failure message for test " + testName);
-		System.out.println("________________________________________________________________________________");
+		System.out
+				.println("________________________________________________________________________________");
 		System.out.println("\n");
 
 		fail("You failed " + failedTests.length
@@ -276,31 +287,90 @@ public class TestUtilFelix {
 							+ "If that doesn't help, file a ticket.");
 		}
 	}
-	
+
 	private static String getString(char c, int n) {
 		StringBuilder res = new StringBuilder();
 		for (int i = 0; i < n; i++)
 			res.append(c);
 		return res.toString();
 	}
-	
+
 	/*
 	 * Print the "running"-bar
 	 */
 	public static void printRunning(String testName) {
-		System.out.println("\nRunning " + testName + "... " + getString('_', 68 - testName.length()));
+		System.out.println("\nRunning " + testName + "... "
+				+ getString('_', 68 - testName.length()));
 	}
-	
+
 	/*
-	 * Prints a progressBar with testId / totalTest percent.
-	 * Assumes that alreadyPrinted chars are already printed.
-	 * Returns a new value for alreadyPrinted.
+	 * Prints a progressBar with testId / totalTest percent. Assumes that
+	 * alreadyPrinted chars are already printed. Returns a new value for
+	 * alreadyPrinted.
 	 */
-	public static int updateProgressBar(int alreadyPrinted, int testID, int totalTests) {
+	public static int updateProgressBar(int alreadyPrinted, int testID,
+			int totalTests) {
 		int newTarget = (testID * 80) / totalTests;
 		System.out.print(getString('▄', newTarget - alreadyPrinted));
 		if (testID == totalTests)
 			System.out.print("\n");
 		return newTarget;
 	}
+
+	private static String makeVarNamePositive(String varName) {
+		if (varName.startsWith("~")) {
+			return varName.substring(1);
+		} else {
+			return varName;
+		}
+	}
+
+	private static Literal varNameToLiteral(String varName,
+			Map<String, Variable> variables) {
+		if (varName.startsWith("~")) {
+			return CnfFactory.createNegativeLiteral(variables
+					.get(makeVarNamePositive(varName)));
+		} else {
+			return CnfFactory.createPositiveLiteral(variables.get(varName));
+		}
+	}
+
+	/*
+	 * parses a "compact Cnf String" like "a-b|a-~b-~c" to a Cnf
+	 * (in that case: (a \/ b) /\ (a \/ ~b \/ ~c) )
+	 */
+	public static Cnf parseCompactCnfString(String compactCnfString) throws InterruptedException {
+		List<String> clauseStrings = Arrays.asList(compactCnfString.split("\\|"));
+		List<List<String>> clauseLiteralStrings = new LinkedList<List<String>>();
+		Set<String> variableStrings = new HashSet<String>();
+
+		// string to lists
+		for (String item : clauseStrings) {
+			List<String> literalStrings = Arrays.asList(item.split("-"));
+			variableStrings.addAll(literalStrings);
+			clauseLiteralStrings.add(literalStrings);
+		}
+
+		// create vars
+		Map<String, Variable> variables = new HashMap<String, Variable>();
+		for (String item : variableStrings) {
+			item = makeVarNamePositive(item);
+			variables.put(item, CnfFactory.createVariable(item));
+		}
+
+		// build clauses
+		List<Clause> clauses = new LinkedList<Clause>();
+		for (List<String> item : clauseLiteralStrings) {
+			List<Literal> clauseLiterals = new LinkedList<Literal>();
+			for (String varString : item) {
+				clauseLiterals.add(varNameToLiteral(varString, variables));
+			}
+			clauses.add(CnfFactory.createClause(clauseLiterals));
+		}
+
+		Cnf cnf = CnfFactory.createCnfFormula(clauses);
+
+		return cnf;
+	}
+
 }
