@@ -24,7 +24,7 @@ import prog2.project3.cnf.Literal;
 import prog2.project3.cnf.Variable;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.2.1";
+	static final String VERSION = "1.2.2";
 
 	@Test
 	public void test_Update() {
@@ -339,7 +339,7 @@ public class TestUtilFelix {
 	 * parses a "compact Cnf String" like "a-b|a-~b-~c" to a Cnf
 	 * (in that case: (a \/ b) /\ (a \/ ~b \/ ~c) )
 	 */
-	public static Cnf parseCompactCnfString(String compactCnfString) throws InterruptedException {
+	public static Cnf parseCompactCnfString(String compactCnfString) {
 		List<String> clauseStrings = Arrays.asList(compactCnfString.split("\\|"));
 		List<List<String>> clauseLiteralStrings = new LinkedList<List<String>>();
 		Set<String> variableStrings = new HashSet<String>();
