@@ -24,7 +24,7 @@ import prog2.project3.cnf.Literal;
 import prog2.project3.cnf.Variable;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.2";
+	static final String VERSION = "1.2.1";
 
 	@Test
 	public void test_Update() {
@@ -372,5 +372,33 @@ public class TestUtilFelix {
 
 		return cnf;
 	}
+	
+	/*
+	 * Returns a compact STring representation of a Clause object.
+	 */
+	public static String clauseToCompactString(Clause clause) {
+		Collection<Literal> literals = clause.getLiterals();
+		List<String> literalStrings = new LinkedList<String>();
 
+		for (Literal item : literals) {
+			literalStrings.add(literalToString(item));
+		}
+
+		return combineStrings(literalStrings, "-");
+	}
+
+	/*
+	 * Returns a string representation of a Cnf object.
+	 */
+	public static String cnfToCompactString(Cnf cnf) {
+		Collection<Clause> clauses = cnf.getClauses();
+		List<String> clauseStrings = new LinkedList<String>();
+
+		for (Clause item : clauses) {
+			clauseStrings.add(clauseToCompactString(item));
+		}
+
+		return combineStrings(clauseStrings, "|");
+	}
+		
 }
