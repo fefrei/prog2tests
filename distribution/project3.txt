@@ -2,7 +2,6 @@
 prog2|project3|tests|
 SatSolverTestUpdateTool.java
 
-
 # Given example files.
 examples|
 empty.txt
@@ -54,7 +53,6 @@ Markus007.txt
 Markus008.txt
 Markus009.txt
 
-
 # Remove old Markus-Files
 prog2|project3|tests|
 -Markus001.txt
@@ -66,3 +64,11 @@ prog2|project3|tests|
 -Markus007.txt
 -Markus008.txt
 -Markus009.txt
+
+
+# == Beta channel ==
+:2
+
+# CnfContentBewiedTest
+prog2|project3|tests|
+CnfContentBewiedTest.java
