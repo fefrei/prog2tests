@@ -78,3 +78,7 @@ prog2|project3|tests|
 # It'll be a while until this one gets published, sorry.
 prog2|project3|tests|
 CnfContentBewiedTest.java
+
+# SpecificationComplianceFelixTest
+prog2|project3|tests|
+SpecificationComplianceFelixTest.java
