@@ -67,7 +67,7 @@ prog2|project3|tests|
 
 
 # == Beta channel ==
-:2
+:1
 
 # CnfContentBewiedTest
 prog2|project3|tests|
@@ -82,3 +82,7 @@ SampleDpllStacktrace.txt
 # SatisfyingAssignmentBewiedTest
 prog2|project3|tests|
 SatisfyingAssignmentBewiedTest.java
+
+# CnfFactoryMarkusTest
+prog2|project3|tests|
+CnfFactoryMarkusTest.java
