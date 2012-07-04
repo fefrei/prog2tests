@@ -15,6 +15,10 @@ simpleSpace.txt
 prog2|project3|tests|
 FormulaReaderBewiedTest.java
 CnfFactoryBewiedTest.java
+StackTraceBewiedTest.java
+SatisfyingAssignmentBewiedTest.java
+examples|Ben|
+SampleDpllStacktrace.txt
 
 
 # Felix' Tests
@@ -41,6 +45,7 @@ prog2|project3|tests|
 -MarkusFormulaReader.java
 FormulaReaderMarkusTest.java
 MarkusBonus1Test.java
+CnfFactoryMarkusTest.java
 
 examples|Markus|
 Markus001.txt
@@ -70,19 +75,6 @@ prog2|project3|tests|
 :1
 
 # CnfContentBewiedTest
+# It'll be a while until this one gets published, sorry.
 prog2|project3|tests|
 CnfContentBewiedTest.java
-
-# StackTraceBewiedTest
-prog2|project3|tests|
-StackTraceBewiedTest.java
-examples|Ben|
-SampleDpllStacktrace.txt
-
-# SatisfyingAssignmentBewiedTest
-prog2|project3|tests|
-SatisfyingAssignmentBewiedTest.java
-
-# CnfFactoryMarkusTest
-prog2|project3|tests|
-CnfFactoryMarkusTest.java
