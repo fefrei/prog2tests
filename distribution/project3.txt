@@ -2,6 +2,7 @@
 prog2|project3|tests|
 SatSolverTestUpdateTool.java
 
+
 # Given example files.
 examples|
 empty.txt
@@ -27,6 +28,7 @@ TestUtilFelix.java
 TseitinFelixTest.java
 Bonus1FelixTest.java
 IntegrationFelixTest.java
+SpecificationComplianceFelixTest.java
 
 examples|Felix|
 TseitinFelixTestData1.txt
@@ -78,7 +80,3 @@ prog2|project3|tests|
 # It'll be a while until this one gets published, sorry.
 prog2|project3|tests|
 CnfContentBewiedTest.java
-
-# SpecificationComplianceFelixTest
-prog2|project3|tests|
-SpecificationComplianceFelixTest.java
