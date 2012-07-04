@@ -643,8 +643,10 @@ public class CnfContentBewiedTest {
 
 		Runnable[] tests = new Runnable[] { new Runnable() {
 			public void run() { // #1
-				// SPEC: Granted.
-				v.getParentClauses().add(createClause(vPosL));
+				// SPEC: Not required
+				if (STRICT) {
+					v.getParentClauses().add(createClause(vPosL));
+				}
 			}
 		}, new Runnable() {
 			public void run() { // #2
@@ -940,6 +942,6 @@ public class CnfContentBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3");
+		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3.1");
 	}
 }
