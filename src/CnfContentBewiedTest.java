@@ -39,10 +39,10 @@ public class CnfContentBewiedTest {
 
 	// ===== TESTS themselves
 	// Federal regulations require me to warn you that this next test
-	// file... is looking pretty good.
+	// file... is looking pretty good. Finally.
 
 	// SPEC: comments mark lines, that talk about the specification
-	// SPEC: According to Tobias, there's something not okay.
+	// According to Tobias, there's something not okay.
 
 	@Test
 	// SPEC: Analyzation Complete
@@ -84,9 +84,8 @@ public class CnfContentBewiedTest {
 		}
 	}
 
-	// SPEC: UNKNOWN!
-
 	@Test
+	// SPEC: Analyzation Complete
 	public void testVariableSpecification() {
 		final Variable v = createVariable(VariableNameGenerator
 				.getVariableName());
@@ -108,13 +107,12 @@ public class CnfContentBewiedTest {
 
 		}
 
-		// SPEC: UNKNOWN
-		// Because: Spec missing
-		// => Do not test.
-		if (STRICT) {
-			assertSame("You must initialize your Variables as UNDEFINED.",
-					TruthValue.UNDEFINED, v.getTruthValue());
-		}
+		// SPEC: Granted.
+		// https://forum.st.cs.uni-saarland.de/boards/viewthread?thread=1531&lastpage=yes#8509
+		assertSame("You must initialize your Variables as UNDEFINED, see h"
+				+ "ttps://forum.st.cs.uni-saarland.de/boards/viewthread?th"
+				+ "read=1531&lastpage=yes#8509 for details.",
+				TruthValue.UNDEFINED, v.getTruthValue());
 		c.reset();
 
 		v.setTruthValue(TruthValue.TRUE);
@@ -409,9 +407,8 @@ public class CnfContentBewiedTest {
 				TruthValue.UNDEFINED, clauseA_NB.getLastTruthValue());
 	}
 
-	// SPEC: UNKNOWN!
-
 	@Test
+	// SPEC: Analyzation Complete
 	public void testClauseSpecification() {
 		final Variable subject = createVariable("subject");
 		final Variable forPos = createVariable("forPos");
@@ -486,10 +483,13 @@ public class CnfContentBewiedTest {
 				+ " non-null unit-literal", clauseNeg.getUnitClauseLiteral());
 
 		if (checkBonus2) {
-			// SPEC: UNKNOWN
+			// SPEC: Granted
+			// https://forum.st.cs.uni-saarland.de/boards/viewthread?thread=1529&lastpage=yes#8510
 			assertTrue("subject is UNDEFINED and forPos is TRUE, therefore"
 					+ " (subject \\/ forPos) shouldn't hinder the variable"
-					+ " from becoming pure negative", subject.isPureNegative());
+					+ " from becoming pure negative. See https://forum.st."
+					+ "cs.uni-saarland.de/boards/viewthread?thread=1529&la"
+					+ "stpage=yes#8510 for details.", subject.isPureNegative());
 			// SPEC: Granted
 			assertFalse("There is a clause (~subject \\/ ~forNeg), and both"
 					+ " are TruthValue.UNDEFINED. Ergo: subject is NOT pure"
@@ -540,25 +540,30 @@ public class CnfContentBewiedTest {
 					+ " pureNegative, since (~subject \\/ ~forNeg) still isn't"
 					+ " determined. Your implementation thought otherwise.",
 					subject.isPureNegative());
+			// SPEC: Granted
+			assertFalse("(~subject \\/ ~forNeg), where forNeg is TRUE, should"
+					+ " prevent subject from becoming purePositive",
+					subject.isPurePositive());
 			forNeg.setTruthValue(TruthValue.FALSE);
+			// SPEC: Granted
+			assertFalse("There is (subject \\/ forPos), and neither of the"
+					+ " variables is set. Therefore, subject cannot be"
+					+ " pureNegative.", subject.isPureNegative());
+			// SPEC: Granted
+			assertTrue("(~subject \\/ ~forNeg), where forNeg is FALSE,"
+					+ " shouldn't prevent subject from becoming"
+					+ " purePositive", subject.isPurePositive());
 			// SPEC: Not required
 			if (STRICT) {
-				assertFalse(
-						"(~subject \\/ ~forNeg) evaluates to TRUE, since forNeg"
-								+ " already is set to FALSE. For best optimization, skip"
-								+ " clauses that already have a truthvalue assigned.",
-						subject.isPureNegative());
+				assertNull("(~subject \\/ ~forNeg) evaluates to TRUE, since"
+						+ " forNeg already is set to FALSE. For best"
+						+ " optimization, skip clauses that already have a"
+						+ " truthvalue assigned.", clauseNeg.getPureLiteral());
 			}
-			assertTrue("", subject.isPurePositive());
-			if (STRICT) {
-				assertNull(
-						"(~subject \\/ ~forNeg) evaluates to TRUE, since forNeg"
-								+ " already is set to FALSE. For best optimization, skip"
-								+ " clauses that already have a truthvalue assigned.",
-						clauseNeg.getPureLiteral());
-			}
-			assertSame(subjectPosLit, clausePos.getPureLiteral());
-			assertSame(null, clauseNeg.getPureLiteral());
+			// SPEC: Granted
+			assertSame("subject is now purePositive, so it should be returned"
+					+ " by getPureLiteral.", subjectPosLit,
+					clausePos.getPureLiteral());
 		}
 	}
 
@@ -578,9 +583,8 @@ public class CnfContentBewiedTest {
 		assertUnitIsAny(cnf, "b");
 	}
 
-	// SPEC: UNKNOWN!
-
 	@Test
+	// SPEC: Analyzation Complete
 	public void testCnfPure() {
 		if (!createVariable("foobar").isPureNegative()) {
 			System.out.println("You chose not to do Bonusaufgabe2, or your"
@@ -597,7 +601,8 @@ public class CnfContentBewiedTest {
 
 		Cnf cnf = TestUtilFelix.parseCompactCnfString("a-b|~a-~c|~b-c");
 		cnf.getVariableForName("a").setTruthValue(TruthValue.TRUE);
-		// SPEC: Unknown
+		// SPEC: Granted, see:
+		// https://forum.st.cs.uni-saarland.de/boards/viewthread?thread=1529&lastpage=yes#8510
 		assertPureIsAny(cnf, "b");
 	}
 
@@ -935,6 +940,6 @@ public class CnfContentBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.2");
+		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3");
 	}
 }
