@@ -24,7 +24,7 @@ import prog2.project3.cnf.Literal;
 import prog2.project3.cnf.Variable;
 
 public class TestUtilFelix {
-	static final String VERSION = "1.2.2";
+	static final String VERSION = "1.2.3";
 
 	@Test
 	public void test_Update() {
@@ -267,7 +267,8 @@ public class TestUtilFelix {
 		if (!file.canRead())
 			throw new RuntimeException(
 					"A test file was not found. Try running the update tool again.\n"
-							+ "If that doesn't help, file a ticket.");
+							+ "If that doesn't help, file a ticket.\n" +
+							"Tell us this file is missing: " + pathToFile);
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -374,7 +375,7 @@ public class TestUtilFelix {
 	}
 	
 	/*
-	 * Returns a compact STring representation of a Clause object.
+	 * Returns a compact String representation of a Clause object.
 	 */
 	public static String clauseToCompactString(Clause clause) {
 		Collection<Literal> literals = clause.getLiterals();
