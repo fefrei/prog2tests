@@ -30,60 +30,61 @@ public class CnfFactoryBewiedTest {
 	@Test
 	public final void testNullSanity() {
 		Runnable[] tests = new Runnable[] { new Runnable() {
-			public void run() {
-				createClause(((Literal[]) null)); // #0
+			public void run() { // #1
+				createClause(((Literal[]) null));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #2
 				createClause((Literal) null);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #3
 				createClause((Collection<Literal>) null);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #4
 				createClause(Collections.singleton((Literal) null));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #5
 				createClause(Collections.singletonList((Literal) null));
 			}
 		}, new Runnable() {
-			public void run() {
-				createCnfFormula(((Clause[]) null)); // #5
+			public void run() { // #6
+				createCnfFormula(((Clause[]) null));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #7
 				createCnfFormula((Clause) null);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #8
 				createCnfFormula((Collection<Clause>) null);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #9
 				createCnfFormula(Collections.singleton((Clause) null));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #10
 				createCnfFormula(Collections.singletonList((Clause) null));
 			}
 		}, new Runnable() {
-			public void run() {
-				createNegativeLiteral(null); // #10
+			public void run() { // #11
+				createNegativeLiteral(null);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #12
 				createPositiveLiteral(null);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #13
 				createVariable(null);
 			}
 		}, };
 
 		checkTestExceptions(tests, "CnfFactoryBewiedTest#testNullSanity",
+				", since a method was called with NULL as argument",
 				NullPointerException.class);
 	}
 
@@ -93,6 +94,7 @@ public class CnfFactoryBewiedTest {
 				"Ä9", "Fußknöchel", "x_1", "@", "[", "`", "{", "Adiòs", "7of9" };
 		checkTestExceptions(tests, new VariableNameTester(),
 				"CnfFactoryBewiedTest#testVariableNamesBad",
+				", since such a name is NOT allowed",
 				IllegalArgumentException.class);
 	}
 
@@ -101,36 +103,37 @@ public class CnfFactoryBewiedTest {
 		String[] tests = new String[] { "a1", "ZuFussGehen", "z9", "foobar",
 				"A" };
 		checkTestExceptions(tests, new VariableNameTester(),
-				"CnfFactoryBewiedTest#testVariableNamesGood", null);
+				"CnfFactoryBewiedTest#testVariableNamesGood",
+				", since such a name IS allowed", null);
 	}
 
 	@Test
 	public final void testCreateClauseBad() {
 		Runnable[] tests = new Runnable[] { new Runnable() {
-			public void run() { // #0
+			public void run() { // #1
 				createClause();
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #2
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = spoof(a);
 				createClause(a, a2);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #3
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
 						false);
 				createClause(a, a2);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #4
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = spoof(a);
 				createClause(a, a, a2);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #5
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
 						false);
@@ -138,30 +141,30 @@ public class CnfFactoryBewiedTest {
 				createClause(a, b, a2);
 			}
 		}, new Runnable() {
-			public void run() { // #5
+			public void run() { // #6
 				createClause(new HashSet<Literal>());
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #7
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = spoof(a);
 				createClause(collect(a, a2));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #8
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
 						false);
 				createClause(collect(a, a2));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #9
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = spoof(a);
 				createClause(collect(a, a, a2));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #10
 				Literal a = new PhonyBewiedLiteral("a", true);
 				Literal a2 = new PhonyBewiedLiteral(spoof(a.getVariable()),
 						false);
@@ -171,48 +174,51 @@ public class CnfFactoryBewiedTest {
 			}
 		} };
 		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseBad",
+				". You can lookup the details of a specific sub-test-number in"
+						+ " lines 110 to 171 (CnfFactoryBewiedTest"
+						+ "#testCreateClauseBad) for details",
 				IllegalArgumentException.class);
 	}
 
 	@Test
 	public final void testCreateClauseGood() {
 		Runnable[] tests = new Runnable[] { new Runnable() {
-			public void run() { // #0
+			public void run() { // #1
 				Variable v = new PhonyBewiedVariable("a");
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = new PhonyBewiedLiteral(v, true);
 				createClause(a, a2);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #2
 				Variable v = new PhonyBewiedVariable("a");
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = createNegativeLiteral(v);
 				createClause(a, a2);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #3
 				Variable v = new PhonyBewiedVariable("a");
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = createPositiveLiteral(v);
 				createClause(a, a2);
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #4
 				Variable v = new PhonyBewiedVariable("a");
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = new PhonyBewiedLiteral(v, true);
 				createClause(collect(a, a2));
 			}
 		}, new Runnable() {
-			public void run() {
+			public void run() { // #5
 				Variable v = new PhonyBewiedVariable("a");
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = createNegativeLiteral(v);
 				createClause(collect(a, a2));
 			}
 		}, new Runnable() {
-			public void run() { // #5
+			public void run() { // #6
 				Variable v = new PhonyBewiedVariable("a");
 				Literal a = new PhonyBewiedLiteral(v, true);
 				Literal a2 = createPositiveLiteral(v);
@@ -221,7 +227,8 @@ public class CnfFactoryBewiedTest {
 			}
 		} };
 		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseGood",
-				null);
+				", since there are no two (non-identical) variable instances"
+						+ " who have an equal name", null);
 	}
 
 	@Test
@@ -286,15 +293,16 @@ public class CnfFactoryBewiedTest {
 	}
 
 	public static final void checkTestExceptions(Runnable[] tests,
-			String method, Class<? extends RuntimeException> clazz) {
+			String method, String reason,
+			Class<? extends RuntimeException> clazz) {
 		List<String> reasons = new LinkedList<String>();
 		List<Integer> indices = new LinkedList<Integer>();
 
 		for (int i = 0; i < tests.length; i++) {
-			String s = assertException(tests[i], clazz);
+			String s = assertException(tests[i], reason, clazz);
 			if (s != null) {
-				reasons.add("#" + i + ": " + s);
-				indices.add(i);
+				reasons.add("#" + (i + 1) + ": " + s);
+				indices.add(i + 1);
 			}
 		}
 
@@ -306,15 +314,16 @@ public class CnfFactoryBewiedTest {
 	}
 
 	public static final <T> void checkTestExceptions(T[] tests, Tester<T> t,
-			String method, Class<? extends RuntimeException> clazz) {
+			String method, String reason,
+			Class<? extends RuntimeException> clazz) {
 		List<String> reasons = new LinkedList<String>();
 		List<Integer> indices = new LinkedList<Integer>();
 
 		for (int i = 0; i < tests.length; i++) {
-			String s = assertException(t, tests[i], clazz);
+			String s = assertException(t, tests[i], reason, clazz);
 			if (s != null) {
-				reasons.add(s);
-				indices.add(i);
+				reasons.add("#" + (i + 1) + ": " + s);
+				indices.add(i + 1);
 			}
 		}
 
@@ -325,13 +334,13 @@ public class CnfFactoryBewiedTest {
 		}
 	}
 
-	public static final String assertException(Runnable r,
+	public static final String assertException(Runnable r, final String reason,
 			Class<? extends RuntimeException> clazz) {
 		try {
 			r.run();
 			if (clazz != null) {
-				return "Expected " + clazz.getSimpleName()
-						+ " to be thrown. You threw nothing.";
+				return "Expected " + clazz.getSimpleName() + " to be thrown"
+						+ reason + ". You threw nothing.";
 			} else {
 				// Expected this
 				return null;
@@ -340,42 +349,43 @@ public class CnfFactoryBewiedTest {
 			return e.getMessage();
 		} catch (RuntimeException e) {
 			if (clazz == null) {
-				return "Expected a clean run, you threw "
+				return "Expected a clean run" + reason + ", you threw "
 						+ e.getClass().getSimpleName() + ": " + e.getMessage();
 			} else if (clazz.isInstance(e)) {
 				// Expected this
 				return null;
 			} else {
-				return "Expected " + clazz.getSimpleName()
-						+ " to be thrown. You threw "
+				return "Expected " + clazz.getSimpleName() + " to be thrown"
+						+ reason + ". You threw "
 						+ e.getClass().getSimpleName() + ": " + e.getMessage();
 			}
 		}
 	}
 
 	public static final <T> String assertException(final Tester<T> t,
-			final T input, final Class<? extends RuntimeException> clazz) {
+			final T input, final String reason,
+			final Class<? extends RuntimeException> clazz) {
 		try {
 			t.test(input);
 			if (clazz != null) {
 				return "Expected " + clazz.getSimpleName()
-						+ " to be thrown for input \"" + input
-						+ "\". You threw nothing.";
+						+ " to be thrown for input \"" + input + "\"" + reason
+						+ ". You threw nothing.";
 			} else {
 				// Expected this
 				return null;
 			}
 		} catch (RuntimeException e) {
 			if (clazz == null) {
-				return "Expected a clean run, but for input " + input
-						+ " you threw " + e.getClass().getSimpleName() + ": "
-						+ e.getMessage();
+				return "Expected a clean run" + reason + ", but for input "
+						+ input + " you threw " + e.getClass().getSimpleName()
+						+ ": " + e.getMessage();
 			} else if (clazz.isInstance(e)) {
 				// Expected this
 				return null;
 			} else {
-				return "Expected " + clazz.getSimpleName()
-						+ " to be thrown. You threw "
+				return "Expected " + clazz.getSimpleName() + " to be thrown"
+						+ reason + ". You threw "
 						+ e.getClass().getSimpleName() + ": " + e.getMessage();
 			}
 		}
@@ -606,6 +616,6 @@ public class CnfFactoryBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.2");
+		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.3");
 	}
 }
