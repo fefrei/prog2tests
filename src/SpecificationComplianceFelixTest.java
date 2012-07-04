@@ -19,11 +19,12 @@ import prog2.project3.dpll.DPLLAlgorithm;
 import prog2.project3.dpll.StackEntry;
 
 public class SpecificationComplianceFelixTest {
-	static final String VERSION = "1.0";
+	static final String VERSION = "1.0.1";
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("SpecificationComplianceFelixTest", VERSION);
+		SatSolverTestUpdateTool.doUpdateTest(
+				"SpecificationComplianceFelixTest", VERSION);
 	}
 
 	@Test
@@ -40,7 +41,7 @@ public class SpecificationComplianceFelixTest {
 
 		List<StackEntry> stack = algo.getStack();
 		assertEquals(
-				"You stack had the wrong amount of entries after one iteration.",
+				"Your stack had the wrong amount of entries after one iteration.",
 				1, stack.size());
 
 		StackEntry entry = stack.get(0);
@@ -49,8 +50,9 @@ public class SpecificationComplianceFelixTest {
 				Choice.CHOSEN, entry.choice);
 
 		assertEquals(
-				"You should have set the first variable to TRUE, because the specification says (line 210) that you should try TRUE first.",
-				TruthValue.TRUE, cnf.getVariableForName("a").getTruthValue());
+				"You should have set the first variable to TRUE, because the specification says " +
+				"(line 210) that you should try TRUE first.",
+				TruthValue.TRUE, entry.variable.getTruthValue());
 
 		assertEquals(
 				"You should habe chosen the variable \"a\" first (lexical order, see line 209 in specification).",
@@ -80,17 +82,10 @@ public class SpecificationComplianceFelixTest {
 
 			@Override
 			public Collection<Variable> getVariables() {
-				Variable[] realVariables = realCnf.getVariables().toArray(
-						new Variable[0]);
-
-				assertEquals(
-						"Your getVariables returned a wrong amount of variables.",
-						3, realVariables.length);
-
 				Collection<Variable> res = new LinkedList<Variable>();
-				res.add(realVariables[1]); // be evil, change the order a bit
-				res.add(realVariables[0]); // be evil, change the order a bit
-				res.add(realVariables[2]);
+				res.add(realCnf.getVariableForName("b"));
+				res.add(realCnf.getVariableForName("a"));
+				res.add(realCnf.getVariableForName("c"));
 
 				return res;
 			}
@@ -124,7 +119,7 @@ public class SpecificationComplianceFelixTest {
 
 		List<StackEntry> stack = algo.getStack();
 		assertEquals(
-				"You stack had the wrong amount of entries after one iteration.",
+				"Your stack had the wrong amount of entries after one iteration.",
 				1, stack.size());
 
 		StackEntry entry = stack.get(0);
@@ -133,16 +128,15 @@ public class SpecificationComplianceFelixTest {
 				Choice.CHOSEN, entry.choice);
 
 		assertEquals(
-				"You should have set the first variable to TRUE, because the specification " +
-				"says (line 210) that you should try TRUE first.",
-				TruthValue.TRUE, spoofedCnf.getVariableForName("a")
-						.getTruthValue());
+				"You should have set the first variable to TRUE, because the specification says " +
+				"(line 210) that you should try TRUE first.",
+				TruthValue.TRUE, entry.variable.getTruthValue());
 
 		assertEquals(
 				"You should habe chosen the variable \"a\" first (lexical order, see line 209 in specification).\n"
-						+ "If you passed SpecificationComplianceFelixTest#testDpllLexicalOrdering, " +
-						"but failed this test, see https://forum.st.cs.uni-saarland.de/" +
-						"boards/viewthread?thread=1511",
-				"a", entry.variable.getName());
+						+ "If you passed SpecificationComplianceFelixTest#testDpllLexicalOrdering, "
+						+ "but failed this test, see https://forum.st.cs.uni-saarland.de/"
+						+ "boards/viewthread?thread=1511", "a",
+				entry.variable.getName());
 	}
 }
