@@ -1,6 +1,6 @@
 package prog2.project3.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import prog2.project3.cnf.TruthValue;
 import prog2.project3.cnf.Variable;
 
 public class CnfFactoryMarkusTest {
-	static final String VERSION = "1.0";
+	static final String VERSION = "1.1";
 
 	@Test
 	public void test_Update() {
@@ -59,19 +59,18 @@ public class CnfFactoryMarkusTest {
 		// Literal.getTruthValue
 		assertEquals("Literal.getTruthValue liefert falsches Ergebnis",
 				TruthValue.TRUE, l1.getTruthValue());
-		assertEquals(
-				"Literal.getTruthValue liefert falsches Ergebnis für negative Literale",
-				TruthValue.FALSE, l2.getTruthValue());
+		assertEquals("Literal.getTruthValue liefert falsches Ergebnis für"
+				+ " negative Literale", TruthValue.FALSE, l2.getTruthValue());
 
 		// chooseSatisfyingAssignment muss Clause.updateTruthValue aufrufen
 		va.setTruthValue(TruthValue.UNDEFINED);
 		l2.chooseSatisfyingAssignment();
-		assertEquals(
-				"Clause (a) nach Literal.chooseSatisfyingAssignment nicht geupdated oder falsches Ergebnis!",
-				TruthValue.FALSE, c1.getLastTruthValue());
-		assertEquals(
-				"Clause (~a) nach Literal.setchooseSatisfyingAssignment nicht geupdated oder falsches Ergebnis!",
-				TruthValue.TRUE, c2.getLastTruthValue());
+		assertEquals("Clause (a) nach Literal.chooseSatisfyingAssignment nicht"
+				+ " geupdated oder falsches Ergebnis!", TruthValue.FALSE,
+				c1.getLastTruthValue());
+		assertEquals("Clause (~a) nach Literal.setchooseSatisfyingAssignment"
+				+ " nicht geupdated oder falsches Ergebnis!", TruthValue.TRUE,
+				c2.getLastTruthValue());
 
 		// negateValue muss Clause.updateTruthValue aufrufen
 		va.negateValue();
@@ -108,7 +107,7 @@ public class CnfFactoryMarkusTest {
 						r = TruthValue.FALSE;
 					assertEquals("Clause (a,b,c): a=" + truthToString(a)
 							+ ", b=" + truthToString(b) + ", c="
-							+ truthToString(c) + ".", cl.getLastTruthValue(), r);
+							+ truthToString(c) + ".", r, cl.getLastTruthValue());
 				}
 			}
 		}
@@ -162,10 +161,9 @@ public class CnfFactoryMarkusTest {
 						r = TruthValue.UNDEFINED;
 					assertEquals("Cnf (a,b,c): a=" + truthToString(a) + ", b="
 							+ truthToString(b) + ", c=" + truthToString(c)
-							+ ".", formula.getTruthValue(), r);
+							+ ".", r, formula.getTruthValue());
 				}
 			}
 		}
 	}
-
 }
