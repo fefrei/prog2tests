@@ -20,7 +20,8 @@ StackTraceBewiedTest.java
 SatisfyingAssignmentBewiedTest.java
 CnfContentBewiedTest.java
 examples|Ben|
-SampleDpllStacktrace.txt
+#SampleDpllStacktrace.txt
+ExtendedDpllStacktrace.txt
 
 
 # Felix' Tests
@@ -75,6 +76,8 @@ prog2|project3|tests|
 
 
 # == Beta channel ==
-:1
+:2
 
-# empty
+# Remove old, corrupted datafile
+examples|Ben|
+-SampleDpllStacktrace.txt
