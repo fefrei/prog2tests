@@ -1,6 +1,7 @@
 package prog2.project3.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -19,7 +20,7 @@ import prog2.project3.dpll.DPLLAlgorithm;
 import prog2.project3.dpll.StackEntry;
 
 public class SpecificationComplianceFelixTest {
-	static final String VERSION = "1.0.1";
+	static final String VERSION = "1.1";
 
 	@Test
 	public void test_Update() {
@@ -28,7 +29,7 @@ public class SpecificationComplianceFelixTest {
 	}
 
 	@Test
-	/*
+	/**
 	 * Tests if the DPLL assigns variables in lexical order.
 	 */
 	public void testDpllLexicalOrdering() {
@@ -50,8 +51,8 @@ public class SpecificationComplianceFelixTest {
 				Choice.CHOSEN, entry.choice);
 
 		assertEquals(
-				"You should have set the first variable to TRUE, because the specification says " +
-				"(line 210) that you should try TRUE first.",
+				"You should have set the first variable to TRUE, because the specification says "
+						+ "(line 210) that you should try TRUE first.",
 				TruthValue.TRUE, entry.variable.getTruthValue());
 
 		assertEquals(
@@ -60,7 +61,7 @@ public class SpecificationComplianceFelixTest {
 	}
 
 	@Test
-	/*
+	/**
 	 * Tests if the DPLL assigns variables in lexical order, even if
 	 * Cnf.getVariables can't be trusted.
 	 */
@@ -128,8 +129,8 @@ public class SpecificationComplianceFelixTest {
 				Choice.CHOSEN, entry.choice);
 
 		assertEquals(
-				"You should have set the first variable to TRUE, because the specification says " +
-				"(line 210) that you should try TRUE first.",
+				"You should have set the first variable to TRUE, because the specification says "
+						+ "(line 210) that you should try TRUE first.",
 				TruthValue.TRUE, entry.variable.getTruthValue());
 
 		assertEquals(
@@ -138,5 +139,29 @@ public class SpecificationComplianceFelixTest {
 						+ "but failed this test, see https://forum.st.cs.uni-saarland.de/"
 						+ "boards/viewthread?thread=1511", "a",
 				entry.variable.getName());
+	}
+
+	@Test
+	/**
+	 * Tests if Unit-Clauses always have a Truth-Value of UNDEFINED
+	 */
+	public void testUnitClauseOnlyIfUndefined() {
+		Cnf cnf = TestUtilFelix.parseCompactCnfString("a-b");
+		cnf.getVariableForName("a").setTruthValue(TruthValue.TRUE);
+
+		if (cnf.getTruthValue() != TruthValue.TRUE) {
+			fail("You did not detect that a clause has the TruthValue TRUE although "
+					+ "a literal ist TRUE.\n"
+					+ "The truth value you gave was: " + cnf.getTruthValue());
+		}
+
+		if (cnf.getUnitClauseLiteral() != null) {
+			System.out.println("\nFAIL: SpecificationComplianceFelixTest#testUnitClauseOnlyIfUndefined\n" +
+					"You found a unit clause in (a \\/ b) although a is already set to TRUE.\n" +
+					"Therefore, the clause has the TruthValue TRUE and should not be a Unit clause.\n" +
+					"See documentation, line 147." +
+					"\n");
+			fail("Your implementation of Unit-Clauses is wrong. See the console.");
+		}
 	}
 }
