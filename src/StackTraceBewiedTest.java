@@ -22,17 +22,51 @@ import prog2.project3.dpll.StackEntry;
 public class StackTraceBewiedTest {
 	// ===== TESTS themselves -- pretty boring, huh?
 
+	/**
+	 * Getestet wird, in dieser Reihenfolge:
+	 * 
+	 * <pre>
+	 * a ! ! !
+	 * a ! a &&
+	 * k k ! =>
+	 * a ! ! ! ! !
+	 * c c ! && a ! => a <=>
+	 * c c ! || a ! => a <=>
+	 * a b && ! a ! b && ! &&
+	 * a ! b => ! a ! a ! <=> ! && !
+	 * a b ! <=> b c <=> c a <=> && &&
+	 * a ! a ! || a ! a && ! &&
+	 * a a a ! a || ! ! ! ! <=> ! &&
+	 * a b b ! && b && b && &&
+	 * b b a b => ! ! ! <=> ! ! ! ! &&
+	 * b b ! ! b && b a || ! && &&
+	 * b a a b ! a || || ! <=> ! ! &&
+	 * a b ! ! b || a => ! ! ! &&
+	 * a b ! ! ! ! b a <=> ! || ! &&
+	 * a a ! b a ! b ! => ! => ! && &&
+	 * a b ! ! a || b a ! && c && <=> &&
+	 * a d ! ! b ! c || && d => ! ! ! &&
+	 * "a b => b c => <=>
+	 * z z ! && f <=>\n\tf ! w <=>\n\tcb sb <=>\n\tf cb <=> !\n\t&& && &&
+	 * a
+	 * a|~b", "a|~a
+	 * ~c-b|~d-c|~b-d|~b-~c|a
+	 * ~a-~x-~b|a-x-b|a-b|~a-~b
+	 * a-~b|a-~b-c|a-~b-c-~d
+	 * a-b|a-~b-c|~c-e-~e-a|b-c-d|~a-~b-d
+	 * </pre>
+	 */
 	@Test
 	public void testDpllStacktrace() {
 		// Für weitere Test-files, eröffnet einfach ein Ticket mit einer
 		// entsprechenden CNF und/oder der UPN-Darstellung :)
-		runFelixwrappedSuite("testDpllStacktrace",
-				parseStacktrace("examples|Ben|SampleDpllStacktrace.txt"));
+		runFelixwrappedSingleFile("testDpllStacktrace",
+				"examples|Ben|ExtendedDpllStacktrace.txt");
 	}
 
 	// ===== OFFICIAL interface and methods. Feel free to use them!
 
-	public static boolean VERBOSE_PARSING = false;
+	public static boolean VERBOSE_PARSING = false, VERBOSE_TESTING = false;
 
 	public static final void runFelixwrappedSingleFile(String name,
 			String pathToFile) {
@@ -51,7 +85,6 @@ public class StackTraceBewiedTest {
 	public static final void runFelixwrappedSuite(String name,
 			List<TestInstance> tests) {
 		List<String> explanations = new LinkedList<String>();
-		System.out.print("Running " + tests.size() + " stacktrace tests ... ");
 		for (TestInstance test : tests) {
 			try {
 				test.runAll();
@@ -61,7 +94,6 @@ public class StackTraceBewiedTest {
 			}
 		}
 		TestUtilFelix.checkFailAndExplain(name, explanations);
-		System.out.println("PASS");
 	}
 
 	public static final void runFailfastSuite(List<TestInstance> tests) {
@@ -139,7 +171,8 @@ public class StackTraceBewiedTest {
 			throw new StacktraceFormatException();
 		}
 		if (VERBOSE_PARSING) {
-			System.out.println("COMPLETE");
+			System.out.println("COMPLETE:");
+
 		}
 		return new TestInstance(c, root);
 	}
@@ -163,14 +196,25 @@ public class StackTraceBewiedTest {
 				throw new StackMismatchException(cnf, currentState, d);
 			}
 			if (finished) {
-				return true;
+				if (VERBOSE_TESTING) {
+					System.out.println("Completed");
+				}
+				return false;
 			}
 			List<StackEntry> stack = d.getStack();
 			for (MyState next : currentState.nextStates) {
 				List<StackEntryExpectation> expected = next.stack;
 				if (matches(expected, stack)) {
 					currentState = next;
-					return false;
+					if (VERBOSE_TESTING) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("Went to #");
+						sb.append(String.valueOf(next.ID));
+						sb.append(", ");
+						appendString(sb, next.stack);
+						System.out.println(sb.toString());
+					}
+					return true;
 				}
 			}
 			throw new StackMismatchException(cnf, currentState, d);
@@ -205,15 +249,89 @@ public class StackTraceBewiedTest {
 
 		public StackMismatchException(Cnf cnf, MyState oldState,
 				DPLLAlgorithm dpllAlgo) {
-			super("While testing your behavior on the cnf " + cnf
-					+ ", you hung in state#" + oldState.ID
-					+ " and your stack was " + dpllAlgo.getStack()
-					+ ". You had the choice between these further states: "
-					+ oldState.nextStateIDs);
+			super(buildMessage(cnf, oldState, dpllAlgo));
 			this.cnf = cnf;
 			this.oldState = oldState;
 			this.dpllAlgo = dpllAlgo;
 		}
+	}
+
+	public static final String buildMessage(Cnf cnf, MyState oldState,
+			DPLLAlgorithm dpllAlgo) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("While testing your behavior on the cnf ");
+		sb.append(cnf.toString());
+		sb.append(":\nYou hung after state #");
+		sb.append(String.valueOf(oldState.ID));
+		sb.append(" and your (correct!) stack of the previous iteration was ");
+		appendString(sb, oldState.stack);
+		sb.append(".\nYou had the choice between these further states:");
+		for (MyState nextState : oldState.nextStates) {
+			sb.append('\n');
+			sb.append('#');
+			sb.append(String.valueOf(nextState.ID));
+			sb.append(':');
+			sb.append(' ');
+			appendString(sb, nextState.stack);
+		}
+		sb.append("\nInstead of any of the previous, your next stack was:\n");
+		appendString(dpllAlgo.getStack(), sb);
+		return sb.toString();
+	}
+
+	public static final void appendString(List<StackEntry> list,
+			StringBuilder sb) {
+		sb.append('[');
+		Iterator<StackEntry> it = list.iterator();
+
+		if (it.hasNext()) {
+			appendString(it.next(), sb);
+		}
+		while (it.hasNext()) {
+			sb.append(',');
+			sb.append(' ');
+			appendString(it.next(), sb);
+		}
+		sb.append(']');
+	}
+
+	public static final void appendString(StringBuilder sb,
+			List<StackEntryExpectation> list) {
+		sb.append('[');
+		Iterator<StackEntryExpectation> it = list.iterator();
+
+		if (it.hasNext()) {
+			appendString(it.next(), sb);
+		}
+		while (it.hasNext()) {
+			sb.append(',');
+			sb.append(' ');
+			appendString(it.next(), sb);
+		}
+		sb.append(']');
+	}
+
+	public static final void appendString(StackEntry e, StringBuilder sb) {
+		sb.append('(');
+		sb.append(e.variable);
+		sb.append(',');
+		sb.append(' ');
+		sb.append(e.choice);
+		sb.append(')');
+	}
+
+	public static final void appendString(StackEntryExpectation e,
+			StringBuilder sb) {
+		sb.append('(');
+		sb.append(e.varname);
+		sb.append('[');
+		sb.append('=');
+		sb.append(e.tv);
+		sb.append(']');
+		sb.append(',');
+		sb.append(' ');
+		sb.append(e.c);
+		sb.append(')');
 	}
 
 	public static final class MyState {
@@ -287,6 +405,6 @@ public class StackTraceBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("StackTraceBewiedTest", "1.0");
+		SatSolverTestUpdateTool.doUpdateTest("StackTraceBewiedTest", "1.2.1");
 	}
 }
