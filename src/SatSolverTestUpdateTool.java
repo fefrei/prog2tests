@@ -34,14 +34,20 @@ public class SatSolverTestUpdateTool extends TestCase {
 	 * Higher values are used for beta testing. Use only if you know how to fix
 	 * any problems. You don't get any advantages if you set this higher.
 	 */
-	private static final int OWN_CHANNEL = 0;
+	private static final int OWN_CHANNEL = 5;
 
 	// ===== Internal constants =====
 	// You shouldn't need to change anything below this
 
-	private static final String PROJECT_ID = "project3", VERSION = "1.5.2",
+	private static final String PROJECT_ID = "project3", VERSION = "1.5.3",
 			DISTRIB = "distribution", SRC = "src", UPDATE = "update",
 			NAME = "SatSolverTestUpdateTool";
+
+	/**
+	 * If we encounter a "serious" problem when reading from the repository, we
+	 * set this to false, so we can PASS (skip) every further test.
+	 */
+	private static boolean isOffline = false;
 
 	/**
 	 * Copied from BufferedInputStream.defaultBufferSize:
@@ -57,6 +63,9 @@ public class SatSolverTestUpdateTool extends TestCase {
 
 	@Test
 	public void test_GetNewTests() {
+		if (isOffline) {
+			return;
+		}
 		BufferedReader reader = null;
 		int updated = 0;
 		String current = null;
@@ -108,8 +117,8 @@ public class SatSolverTestUpdateTool extends TestCase {
 						updated += 1;
 						System.out.println("Deleting file " + file);
 						if (!file.delete()) {
-							System.out.println("\tCouldn't delete" +
-									" -- please remove manually!");
+							System.out.println("\tCouldn't delete"
+									+ " -- please remove manually!");
 						}
 					}
 				} else if (!file.canRead()) {
@@ -131,6 +140,9 @@ public class SatSolverTestUpdateTool extends TestCase {
 			reader.close();
 			reader = null;
 		} catch (IOException e) {
+			// We had a problem reading a file that is DEFINITELY there.
+			// => This is serious.
+			setOffline(PROJECT_ID + "txt");
 			if (reader != null) {
 				try {
 					reader.close();
@@ -159,6 +171,10 @@ public class SatSolverTestUpdateTool extends TestCase {
 
 	public static final void doUpdateTest(final String testID,
 			final String currentVersion) {
+		if (isOffline) {
+			return;
+		}
+
 		String remoteVersion, updatePath;
 
 		// Poll and verify remote version:
@@ -170,6 +186,9 @@ public class SatSolverTestUpdateTool extends TestCase {
 			updatePath = reader.readLine();
 			reader.close();
 		} catch (IOException e) {
+			// We had a problem reading a file that is MOST DEFINITELY there.
+			// => This is "serious".
+			setOffline(testID);
 			throw new RuntimeException(OFFLINE, e);
 		}
 
@@ -221,6 +240,16 @@ public class SatSolverTestUpdateTool extends TestCase {
 	}
 
 	// ===== Internal helper methods =====
+
+	private static final void setOffline(String name) {
+		isOffline = true;
+		System.out.println("\n___________\nEncountered difficulties connecting"
+				+ " to file \"" + name + "\" of our repository.\nWarning: All"
+				+ " further attempts to connect with the repository are"
+				+ " SUPPRESSED, and your tests may be out-of-date.\nPlease"
+				+ " make sure that you reconnect soon and update/verify your"
+				+ " tests.\n___________\n");
+	}
 
 	private static final boolean isComment(String s) {
 		switch (s.charAt(0)) {
