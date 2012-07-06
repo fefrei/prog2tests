@@ -18,6 +18,7 @@ FormulaReaderBewiedTest.java
 CnfFactoryBewiedTest.java
 StackTraceBewiedTest.java
 SatisfyingAssignmentBewiedTest.java
+CnfContentBewiedTest.java
 examples|Ben|
 SampleDpllStacktrace.txt
 
@@ -76,7 +77,4 @@ prog2|project3|tests|
 # == Beta channel ==
 :1
 
-# CnfContentBewiedTest
-# It'll be a while until this one gets published, sorry.
-prog2|project3|tests|
-CnfContentBewiedTest.java
+# empty
