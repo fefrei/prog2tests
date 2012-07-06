@@ -749,6 +749,11 @@ public class CnfContentBewiedTest {
 				// SPEC: Granted.
 				new DPLLAlgorithm(null);
 			}
+		}, new Runnable() {
+			public void run() { // #13
+				// SPEC: Granted.
+				v.addParentClause(null);
+			}
 		} };
 		CnfFactoryBewiedTest.checkTestExceptions(tests,
 				"CnfContentBewiedTest#testNullPointerException",
@@ -942,6 +947,6 @@ public class CnfContentBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3.1");
+		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3.2");
 	}
 }
