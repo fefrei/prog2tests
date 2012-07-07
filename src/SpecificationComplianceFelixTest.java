@@ -20,7 +20,7 @@ import prog2.project3.dpll.DPLLAlgorithm;
 import prog2.project3.dpll.StackEntry;
 
 public class SpecificationComplianceFelixTest {
-	static final String VERSION = "1.2";
+	static final String VERSION = "1.3";
 
 	@Test
 	public void test_Update() {
@@ -180,6 +180,38 @@ public class SpecificationComplianceFelixTest {
 					+ "See this thread for more information: "
 					+ "https://forum.st.cs.uni-saarland.de/boards/viewthread?thread=1535\n");
 			fail("You did not implement Bonus2 correctly. See the console for more information.");
+		}
+	}
+
+	@Test
+	/**
+	 * Tests whether we can trick your implementation of DPLL into throwing
+	 * an NullPointerException by calling getSatisfyingAssignment after using iterate
+	 * 
+	 * This test is brought to you by Christian Faber.
+	 */
+	public void testDpllGetAssignmentAfterIterate() {
+		Cnf forumula = TestUtilFelix.parseCompactCnfString("a|~a-b");
+		DPLLAlgorithm dpll = new DPLLAlgorithm(forumula);
+		Variable varA = forumula.getVariableForName("a");
+
+		dpll.iterate();
+		dpll.iterate();
+
+		if (varA.getTruthValue() == TruthValue.TRUE && forumula.getTruthValue() == TruthValue.TRUE) {
+			try {
+				dpll.getSatisfyingAssignment().get("a").booleanValue();
+			} catch (NullPointerException e) {
+
+				/*
+				 * Ja das testen die wirklich! Das Problem ist, dass nach
+				 * iterate der wert dpll.satisfied nicht gesetzt wird wodurch
+				 * eure formel unter Umständen noch einmal duchläuft ohne den
+				 * Stack zu leeren!
+				 */
+
+				fail("You returned Null when asked for the SatisfiyingAssignment of a formula even though it is True (even by your calculation)! Tip: Debug!");
+			}
 		}
 	}
 }
