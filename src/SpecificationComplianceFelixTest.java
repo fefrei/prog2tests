@@ -20,12 +20,11 @@ import prog2.project3.dpll.DPLLAlgorithm;
 import prog2.project3.dpll.StackEntry;
 
 public class SpecificationComplianceFelixTest {
-	static final String VERSION = "1.1";
+	static final String VERSION = "1.2";
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest(
-				"SpecificationComplianceFelixTest", VERSION);
+		SatSolverTestUpdateTool.doUpdateTest("SpecificationComplianceFelixTest", VERSION);
 	}
 
 	@Test
@@ -41,19 +40,17 @@ public class SpecificationComplianceFelixTest {
 		algo.iterate();
 
 		List<StackEntry> stack = algo.getStack();
-		assertEquals(
-				"Your stack had the wrong amount of entries after one iteration.",
-				1, stack.size());
+		assertEquals("Your stack had the wrong amount of entries after one iteration.", 1,
+				stack.size());
 
 		StackEntry entry = stack.get(0);
-		assertEquals(
-				"You should have guessed a variable, but your stack says IMPLIED.",
+		assertEquals("You should have guessed a variable, but your stack says IMPLIED.",
 				Choice.CHOSEN, entry.choice);
 
 		assertEquals(
 				"You should have set the first variable to TRUE, because the specification says "
-						+ "(line 210) that you should try TRUE first.",
-				TruthValue.TRUE, entry.variable.getTruthValue());
+						+ "(line 210) that you should try TRUE first.", TruthValue.TRUE,
+				entry.variable.getTruthValue());
 
 		assertEquals(
 				"You should habe chosen the variable \"a\" first (lexical order, see line 209 in specification).",
@@ -66,8 +63,7 @@ public class SpecificationComplianceFelixTest {
 	 * Cnf.getVariables can't be trusted.
 	 */
 	public void testDpllLexicalOrderingSpoofedCnf() {
-		final Cnf realCnf = TestUtilFelix
-				.parseCompactCnfString("b-a-c|~b-~c-~a");
+		final Cnf realCnf = TestUtilFelix.parseCompactCnfString("b-a-c|~b-~c-~a");
 
 		final Cnf spoofedCnf = new Cnf() {
 
@@ -119,26 +115,23 @@ public class SpecificationComplianceFelixTest {
 		algo.iterate();
 
 		List<StackEntry> stack = algo.getStack();
-		assertEquals(
-				"Your stack had the wrong amount of entries after one iteration.",
-				1, stack.size());
+		assertEquals("Your stack had the wrong amount of entries after one iteration.", 1,
+				stack.size());
 
 		StackEntry entry = stack.get(0);
-		assertEquals(
-				"You should have guessed a variable, but your stack says IMPLIED.",
+		assertEquals("You should have guessed a variable, but your stack says IMPLIED.",
 				Choice.CHOSEN, entry.choice);
 
 		assertEquals(
 				"You should have set the first variable to TRUE, because the specification says "
-						+ "(line 210) that you should try TRUE first.",
-				TruthValue.TRUE, entry.variable.getTruthValue());
+						+ "(line 210) that you should try TRUE first.", TruthValue.TRUE,
+				entry.variable.getTruthValue());
 
 		assertEquals(
 				"You should habe chosen the variable \"a\" first (lexical order, see line 209 in specification).\n"
 						+ "If you passed SpecificationComplianceFelixTest#testDpllLexicalOrdering, "
 						+ "but failed this test, see https://forum.st.cs.uni-saarland.de/"
-						+ "boards/viewthread?thread=1511", "a",
-				entry.variable.getName());
+						+ "boards/viewthread?thread=1511", "a", entry.variable.getName());
 	}
 
 	@Test
@@ -151,17 +144,42 @@ public class SpecificationComplianceFelixTest {
 
 		if (cnf.getTruthValue() != TruthValue.TRUE) {
 			fail("You did not detect that a clause has the TruthValue TRUE although "
-					+ "a literal ist TRUE.\n"
-					+ "The truth value you gave was: " + cnf.getTruthValue());
+					+ "a literal ist TRUE.\n" + "The truth value you gave was: "
+					+ cnf.getTruthValue());
 		}
 
 		if (cnf.getUnitClauseLiteral() != null) {
-			System.out.println("\nFAIL: SpecificationComplianceFelixTest#testUnitClauseOnlyIfUndefined\n" +
-					"You found a unit clause in (a \\/ b) although a is already set to TRUE.\n" +
-					"Therefore, the clause has the TruthValue TRUE and should not be a Unit clause.\n" +
-					"See documentation, line 147." +
-					"\n");
+			System.out
+					.println("\nFAIL: SpecificationComplianceFelixTest#testUnitClauseOnlyIfUndefined\n"
+							+ "You found a unit clause in (a \\/ b) although a is already set to TRUE.\n"
+							+ "Therefore, the clause has the TruthValue TRUE and should not be a Unit clause.\n"
+							+ "See documentation, line 147." + "\n");
 			fail("Your implementation of Unit-Clauses is wrong. See the console.");
+		}
+	}
+
+	@Test
+	/**
+	 * Tests if you really read the specification for Bonus2.
+	 */
+	public void testBonus2SpecificationCompliance() {
+		Cnf cnf = TestUtilFelix.parseCompactCnfString("a-b");
+		cnf.getVariableForName("a").setTruthValue(TruthValue.TRUE);
+		cnf.getVariableForName("b").setTruthValue(TruthValue.UNDEFINED);
+
+		if (cnf.getPureLiteral() == null) {
+			System.out.println("\nYou did not implement Bonus2 correctly.\n"
+					+ "I called cnf.getPureLiteral() for this Cnf: "
+					+ TestUtilFelix.cnfToString(cnf) + "\n"
+					+ "(a is set to TRUE, b is UNDEFINED)\n"
+					+ "You did not return a pure literal.\n"
+					+ "But in fact, 'b' is a pure literal in that clause.\n"
+					+ "I know that it does not make much sense to say that a clause "
+					+ "with truth value TRUE has a pure literal, "
+					+ "but the specification wants it this way.\n"
+					+ "See this thread for more information: "
+					+ "https://forum.st.cs.uni-saarland.de/boards/viewthread?thread=1535\n");
+			fail("You did not implement Bonus2 correctly. See the console for more information.");
 		}
 	}
 }
