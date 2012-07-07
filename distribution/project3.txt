@@ -21,7 +21,8 @@ SatisfyingAssignmentBewiedTest.java
 CnfContentBewiedTest.java
 examples|Ben|
 #SampleDpllStacktrace.txt
-ExtendedDpllStacktrace.txt
+#ExtendedDpllStacktrace.txt
+CorrectDpllStacktrace.txt
 
 
 # Felix' Tests
@@ -81,3 +82,4 @@ prog2|project3|tests|
 # Remove old, corrupted datafile
 examples|Ben|
 -SampleDpllStacktrace.txt
+-ExtendedDpllStacktrace.txt
