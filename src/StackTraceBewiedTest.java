@@ -60,40 +60,82 @@ public class StackTraceBewiedTest {
 	public void testDpllStacktrace() {
 		// Für weitere Test-files, eröffnet einfach ein Ticket mit einer
 		// entsprechenden CNF und/oder der UPN-Darstellung :)
-		runFelixwrappedSingleFile("testDpllStacktrace",
-				"examples|Ben|ExtendedDpllStacktrace.txt");
+		runFelixwrappedSingleFile(ITERATIONS, "testDpllStacktrace",
+				"examples|Ben|CorrectDpllStacktrace.txt");
 	}
 
 	// ===== OFFICIAL interface and methods. Feel free to use them!
 
-	public static boolean VERBOSE_PARSING = false, VERBOSE_TESTING = false;
+	public static boolean VERBOSE_PARSING = false,
+			VERY_VERBOSE_PARSING = false, VERBOSE_TESTING = false,
+			VERY_VERBOSE_TESTING = false, FAIL_INTENTIONALLY = false;
+	public static int ITERATIONS = 100;
 
-	public static final void runFelixwrappedSingleFile(String name,
-			String pathToFile) {
-		runFelixwrappedSuite(name, parseStacktrace(pathToFile));
+	public static final void runFelixwrappedSingleFile(int iterations,
+			String name, String pathToFile) {
+		runFelixwrappedSuite(iterations, name, parseStacktrace(pathToFile));
 	}
 
-	public static final void runFelixwrappedFiles(String name, String prefix,
-			String... filenames) {
+	public static final void runFelixwrappedFiles(int iterations, String name,
+			String prefix, String... filenames) {
 		List<TestInstance> tests = new LinkedList<TestInstance>();
 		for (String filename : filenames) {
 			tests.addAll(parseStacktrace(prefix + filename));
 		}
-		runFelixwrappedSuite(name, tests);
+		runFelixwrappedSuite(iterations, name, tests);
 	}
 
-	public static final void runFelixwrappedSuite(String name,
+	public static final void runFelixwrappedSuite(int iterations, String name,
 			List<TestInstance> tests) {
-		List<String> explanations = new LinkedList<String>();
-		for (TestInstance test : tests) {
-			try {
-				test.runAll();
-				explanations.add(null);
-			} catch (StackMismatchException e) {
-				explanations.add(e.getMessage());
+		if (iterations == 0) {
+			return;
+		}
+		final int TESTS_PER_ITERATION = tests.size();
+		final int TESTS_COUNT = TESTS_PER_ITERATION * iterations;
+		final boolean PROGRESS_BAR;
+
+		List<Integer> failedTests = new LinkedList<Integer>();
+		List<String> failureMessages = new LinkedList<String>();
+		int alreadyPrinted = 0;
+		int currentTest = 1;
+
+		if (VERBOSE_TESTING || VERY_VERBOSE_TESTING) {
+			System.out.println("Disabling progress bar due to verbosity level");
+			PROGRESS_BAR = false;
+		} else {
+			PROGRESS_BAR = true;
+		}
+
+		TestUtilFelix.printRunning(name);
+
+		for (int i = 0; i < iterations; i++) {
+			if (VERBOSE_TESTING) {
+				System.out.println("========== Iteration #" + i);
+			}
+			int testIdx = 0;
+			for (TestInstance test : tests) {
+				try {
+					test.runAll();
+				} catch (StackMismatchException e) {
+					failedTests.add(testIdx + 1);
+					failureMessages.add("Test " + (testIdx + 1)
+							+ " failed with this message:\n" + e.getMessage());
+				}
+				if (PROGRESS_BAR) {
+					alreadyPrinted = TestUtilFelix.updateProgressBar(
+							alreadyPrinted, currentTest, TESTS_COUNT);
+				}
+				currentTest++;
+			}
+
+			if (!failedTests.isEmpty()) {
+				// It's most improbable that this occurs only in the last
+				// iteration.
+				System.out.println("X");
+				TestUtilFelix.failAndExplain(name, TESTS_PER_ITERATION,
+						failedTests, failureMessages);
 			}
 		}
-		TestUtilFelix.checkFailAndExplain(name, explanations);
 	}
 
 	public static final void runFailfastSuite(List<TestInstance> tests) {
@@ -103,26 +145,35 @@ public class StackTraceBewiedTest {
 	}
 
 	public static final List<TestInstance> parseStacktrace(String pathToFile) {
-		return parseStacktrace(TestUtilFelix.parseDataFile(pathToFile));
+		long start = System.currentTimeMillis();
+		final List<TestInstance> ret = parseStacktrace(TestUtilFelix
+				.parseDataFile(pathToFile));
+		if (VERBOSE_PARSING) {
+			System.out.println("Took " + (System.currentTimeMillis() - start)
+					+ "ms for parsing.");
+		}
+		return ret;
 	}
 
 	public static final List<TestInstance> parseStacktrace(List<String> lines) {
 		List<TestInstance> ret = new LinkedList<TestInstance>();
 		Iterator<String> it = lines.iterator();
+		int counter = 0;
 		while (it.hasNext()) {
-			ret.add(parseStacktrace(it));
+			ret.add(parseStacktrace(it, ++counter));
 		}
 		return ret;
 	}
 
-	public static final TestInstance parseStacktrace(Iterator<String> it) {
+	public static final TestInstance parseStacktrace(Iterator<String> it,
+			int testcase) {
 		Map<Integer, MyState> states;
 		Cnf c;
 		try {
 			c = TestUtilFelix.parseCompactCnfString(it.next());
 			it.next(); // "-1", later the "minCount"
 			int stateCount = Integer.valueOf(it.next());
-			if (VERBOSE_PARSING) {
+			if (VERY_VERBOSE_PARSING) {
 				System.out.print("Parsing " + stateCount + " states ... ");
 			}
 			states = new LinkedHashMap<Integer, MyState>();
@@ -141,12 +192,12 @@ public class StackTraceBewiedTest {
 				}
 			}
 		} catch (NoSuchElementException e) {
-			if (VERBOSE_PARSING) {
+			if (VERY_VERBOSE_PARSING) {
 				System.out.println("FAILED");
 			}
 			throw new StacktraceFormatException(e);
 		} catch (NumberFormatException e) {
-			if (VERBOSE_PARSING) {
+			if (VERY_VERBOSE_PARSING) {
 				System.out.println("FAILED");
 			}
 			throw new StacktraceFormatException(e);
@@ -155,7 +206,7 @@ public class StackTraceBewiedTest {
 			for (Integer id : state.nextStateIDs) {
 				MyState found = states.get(id);
 				if (found == null) {
-					if (VERBOSE_PARSING) {
+					if (VERY_VERBOSE_PARSING) {
 						System.out.println("FAILED");
 					}
 					throw new StacktraceFormatException();
@@ -165,28 +216,32 @@ public class StackTraceBewiedTest {
 		}
 		MyState root = states.get(0);
 		if (root == null) {
-			if (VERBOSE_PARSING) {
+			if (VERY_VERBOSE_PARSING) {
 				System.out.println("FAILED");
 			}
 			throw new StacktraceFormatException();
 		}
-		if (VERBOSE_PARSING) {
-			System.out.println("COMPLETE:");
+		if (VERY_VERBOSE_PARSING) {
+			System.out.println("COMPLETE");
 
 		}
-		return new TestInstance(c, root);
+		return new TestInstance(c, root, testcase);
 	}
 
 	// ===== "INSTANCE" of a test case
 
 	public static final class TestInstance {
-		private final DPLLAlgorithm d;
 		private final Cnf cnf;
+		private final MyState root;
+		private final int testcase;
+
+		private DPLLAlgorithm d;
 		private MyState currentState;
 
-		public TestInstance(Cnf cnf, MyState currentState) {
+		public TestInstance(Cnf cnf, MyState root, int testcase) {
+			this.root = currentState = root;
 			this.cnf = cnf;
-			this.currentState = currentState;
+			this.testcase = testcase;
 			d = new DPLLAlgorithm(cnf);
 		}
 
@@ -197,16 +252,20 @@ public class StackTraceBewiedTest {
 			}
 			if (finished) {
 				if (VERBOSE_TESTING) {
-					System.out.println("Completed");
+					System.out
+							.println("<===== Completed testcase #" + testcase);
 				}
 				return false;
 			}
 			List<StackEntry> stack = d.getStack();
+			if (FAIL_INTENTIONALLY && currentState.ID > 30) {
+				stack = new LinkedList<StackEntry>();
+			}
 			for (MyState next : currentState.nextStates) {
 				List<StackEntryExpectation> expected = next.stack;
 				if (matches(expected, stack)) {
 					currentState = next;
-					if (VERBOSE_TESTING) {
+					if (VERY_VERBOSE_TESTING) {
 						StringBuilder sb = new StringBuilder();
 						sb.append("Went to #");
 						sb.append(String.valueOf(next.ID));
@@ -217,12 +276,27 @@ public class StackTraceBewiedTest {
 					return true;
 				}
 			}
+			if (VERBOSE_TESTING) {
+				System.out.println("<===== FAILED after state #"
+						+ currentState.ID + " in testcase #" + testcase);
+			}
 			throw new StackMismatchException(cnf, currentState, d);
 		}
 
 		public void runAll() throws StackMismatchException {
+			if (VERBOSE_TESTING) {
+				System.out.println("=====> Started testcase #" + testcase);
+			}
 			while (runStep())
 				;
+			// Don't need to reset in case of error.
+			reset();
+		}
+
+		public void reset() {
+			currentState = root;
+			cnf.resetAllVariables();
+			d = new DPLLAlgorithm(cnf);
 		}
 	}
 
@@ -260,7 +334,7 @@ public class StackTraceBewiedTest {
 			DPLLAlgorithm dpllAlgo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("While testing your behavior on the cnf ");
-		sb.append(cnf.toString());
+		sb.append(TestUtilFelix.cnfToString(cnf));
 		sb.append(":\nYou hung after state #");
 		sb.append(String.valueOf(oldState.ID));
 		sb.append(" and your (correct!) stack of the previous iteration was ");
@@ -274,7 +348,7 @@ public class StackTraceBewiedTest {
 			sb.append(' ');
 			appendString(sb, nextState.stack);
 		}
-		sb.append("\nInstead of any of the previous, your next stack was:\n");
+		sb.append("\nInstead of any of the above, your next stack was:\n");
 		appendString(dpllAlgo.getStack(), sb);
 		return sb.toString();
 	}
@@ -313,24 +387,22 @@ public class StackTraceBewiedTest {
 
 	public static final void appendString(StackEntry e, StringBuilder sb) {
 		sb.append('(');
-		sb.append(e.variable);
-		sb.append(',');
-		sb.append(' ');
-		sb.append(e.choice);
+		sb.append(e.choice.toString().charAt(0));
+		sb.append(':');
+		sb.append(e.variable.getName());
+		sb.append('=');
+		sb.append(e.variable.getTruthValue().toString().charAt(0));
 		sb.append(')');
 	}
 
 	public static final void appendString(StackEntryExpectation e,
 			StringBuilder sb) {
 		sb.append('(');
+		sb.append(e.c.toString().charAt(0));
+		sb.append(':');
 		sb.append(e.varname);
-		sb.append('[');
 		sb.append('=');
-		sb.append(e.tv);
-		sb.append(']');
-		sb.append(',');
-		sb.append(' ');
-		sb.append(e.c);
+		sb.append(e.tv.toString().charAt(0));
 		sb.append(')');
 	}
 
@@ -380,20 +452,24 @@ public class StackTraceBewiedTest {
 		}
 
 		public boolean matches(StackEntry e) {
-			return e.choice == c && e.variable.getTruthValue() == tv
+			boolean ret = e.choice == c && e.variable.getTruthValue() == tv
 					&& e.variable.getName().equals(varname);
+			// System.out.println(e+"matches "+this+": "+ret);
+			return ret;
 		}
 	}
 
 	public static final boolean matches(List<StackEntryExpectation> expected,
 			List<StackEntry> actual) {
 		if (expected.size() != actual.size()) {
+			// System.out.println(expected+" has a different size than "+actual);
 			return false;
 		}
 		Iterator<StackEntryExpectation> exp = expected.iterator();
 		Iterator<StackEntry> act = actual.iterator();
 		while (exp.hasNext()) {
 			if (!act.hasNext()) {
+				// System.out.println("FAIL!!!!!");
 				return false;
 			}
 			if (!exp.next().matches(act.next())) {
@@ -405,6 +481,6 @@ public class StackTraceBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("StackTraceBewiedTest", "1.2.1");
+		SatSolverTestUpdateTool.doUpdateTest("StackTraceBewiedTest", "1.3");
 	}
 }
