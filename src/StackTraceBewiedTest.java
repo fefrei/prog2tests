@@ -231,16 +231,18 @@ public class StackTraceBewiedTest {
 	// ===== "INSTANCE" of a test case
 
 	public static final class TestInstance {
-		private final Cnf cnf;
 		private final MyState root;
 		private final int testcase;
+		private final String compact;
 
+		private Cnf cnf;
 		private DPLLAlgorithm d;
 		private MyState currentState;
 
 		public TestInstance(Cnf cnf, MyState root, int testcase) {
 			this.root = currentState = root;
 			this.cnf = cnf;
+			compact = TestUtilFelix.cnfToCompactString(cnf);
 			this.testcase = testcase;
 			d = new DPLLAlgorithm(cnf);
 		}
@@ -295,7 +297,7 @@ public class StackTraceBewiedTest {
 
 		public void reset() {
 			currentState = root;
-			cnf.resetAllVariables();
+			cnf = TestUtilFelix.parseCompactCnfString(compact);
 			d = new DPLLAlgorithm(cnf);
 		}
 	}
@@ -481,6 +483,6 @@ public class StackTraceBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("StackTraceBewiedTest", "1.3");
+		SatSolverTestUpdateTool.doUpdateTest("StackTraceBewiedTest", "1.3.1");
 	}
 }
