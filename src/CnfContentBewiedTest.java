@@ -909,9 +909,9 @@ public class CnfContentBewiedTest {
 		}
 
 		public void assertUpdates() {
-			assertTrue("The parent clause should have been updated "
-					+ truthUpdates + " time(s) by now, but was only updated "
-					+ this.truthUpdates + " time(s).", truthUpdates > 0);
+			assertTrue("The parent clause should have been updated at least"
+					+ " once by now, but was only updated " + this.truthUpdates
+					+ " time(s).", truthUpdates > 0);
 		}
 
 		public void reset() {
@@ -947,6 +947,6 @@ public class CnfContentBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3.2");
+		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3.3");
 	}
 }
