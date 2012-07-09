@@ -646,6 +646,8 @@ public class CnfContentBewiedTest {
 				// SPEC: Not required
 				if (STRICT) {
 					v.getParentClauses().add(createClause(vPosL));
+				} else {
+					throw new UnsupportedOperationException();
 				}
 			}
 		}, new Runnable() {
@@ -670,6 +672,8 @@ public class CnfContentBewiedTest {
 				// => DO NOT TEST
 				if (STRICT) {
 					vCnf.getVariables().add(createVariable("asd"));
+				} else {
+					throw new UnsupportedOperationException();
 				}
 			}
 		} };
@@ -947,6 +951,6 @@ public class CnfContentBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3.3");
+		SatSolverTestUpdateTool.doUpdateTest("CnfContentBewiedTest", "1.3.4");
 	}
 }
