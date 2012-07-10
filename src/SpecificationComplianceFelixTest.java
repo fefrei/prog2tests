@@ -20,7 +20,7 @@ import prog2.project3.dpll.DPLLAlgorithm;
 import prog2.project3.dpll.StackEntry;
 
 public class SpecificationComplianceFelixTest {
-	static final String VERSION = "1.3";
+	static final String VERSION = "1.3.1";
 
 	@Test
 	public void test_Update() {
@@ -191,12 +191,12 @@ public class SpecificationComplianceFelixTest {
 	 * This test is brought to you by Christian Faber.
 	 */
 	public void testDpllGetAssignmentAfterIterate() {
-		Cnf forumula = TestUtilFelix.parseCompactCnfString("a|~a-b");
+		Cnf forumula = TestUtilFelix.parseCompactCnfString("a-b|a-~b|~a-b");
 		DPLLAlgorithm dpll = new DPLLAlgorithm(forumula);
 		Variable varA = forumula.getVariableForName("a");
 
-		dpll.iterate();
-		dpll.iterate();
+		while (!dpll.iterate()) {
+		}
 
 		if (varA.getTruthValue() == TruthValue.TRUE && forumula.getTruthValue() == TruthValue.TRUE) {
 			try {
@@ -210,7 +210,8 @@ public class SpecificationComplianceFelixTest {
 				 * Stack zu leeren!
 				 */
 
-				fail("You returned Null when asked for the SatisfiyingAssignment of a formula even though it is True (even by your calculation)! Tip: Debug!");
+				fail("You returned Null when asked for the SatisfiyingAssignment of a "
+						+ "formula even though it is True (even by your calculation)! Tip: Debug!");
 			}
 		}
 	}
