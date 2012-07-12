@@ -1,7 +1,9 @@
 package prog2.project3.tests;
 
 // import static prog2.project3.cnf.CnfFactory.*;
-import static org.junit.Assert.fail;
+// import static org.junit.Assert.*;
+
+import static org.junit.Assert.*;
 import static prog2.project3.cnf.CnfFactory.createClause;
 import static prog2.project3.cnf.CnfFactory.createCnfFormula;
 import static prog2.project3.cnf.CnfFactory.createNegativeLiteral;
@@ -88,6 +90,11 @@ public class CnfFactoryBewiedTest {
 				NullPointerException.class);
 	}
 
+	/**
+	 * Tests some illegal names, and checks whether they are correctly
+	 * identified as being illegal. Note that \u0666 is an arabic number, and
+	 * Character.isDigit() returns true. The others should be obvious, I hope.
+	 */
 	@Test
 	public final void testVariableNamesBad() {
 		String[] tests = new String[] { "", " ", "'", "Ä", "aÄ", "a\u0666",
@@ -98,6 +105,12 @@ public class CnfFactoryBewiedTest {
 				IllegalArgumentException.class);
 	}
 
+	/**
+	 * Tests whether some actually perfectly fine variable names are accurately
+	 * identified as being legal. Note how I also test the very start and
+	 * beginning of the "two alphabet ranges", and that a name shouldn't start
+	 * with a digit.
+	 */
 	@Test
 	public final void testVariableNamesGood() {
 		String[] tests = new String[] { "a1", "ZuFussGehen", "z9", "foobar",
@@ -107,6 +120,11 @@ public class CnfFactoryBewiedTest {
 				", since such a name IS allowed", null);
 	}
 
+	/**
+	 * Checks that bad clauses are correctly identified as such. A clause is
+	 * "bad" if there are no literals, or there are two variable objects
+	 * reachable that have a .equals name
+	 */
 	@Test
 	public final void testCreateClauseBad() {
 		Runnable[] tests = new Runnable[] { new Runnable() {
@@ -170,6 +188,17 @@ public class CnfFactoryBewiedTest {
 						false);
 				Literal b = new PhonyBewiedLiteral("b", true);
 				createClause(collect(a, b, a2));
+			}
+		}, new Runnable() {
+			public void run() { // #11
+				String a = "a";
+				String a2 = new String(a);
+				assertFalse("The compiler optimized too heavily", a == a2);
+				// Make sure that we are NOT using the SAME string,
+				// but one that is EQUALS.
+				Literal l = new PhonyBewiedLiteral(a, true);
+				Literal l2 = new PhonyBewiedLiteral(a2, false);
+				createClause(collect(l, l2));
 				// I can't think of any other "special" cases that should fail.
 			}
 		} };
@@ -180,57 +209,66 @@ public class CnfFactoryBewiedTest {
 				IllegalArgumentException.class);
 	}
 
-//	@Test
-//	public final void testCreateClauseGood() {
-//		Runnable[] tests = new Runnable[] { new Runnable() {
-//			public void run() { // #1
-//				Variable v = new PhonyBewiedVariable("a");
-//				Literal a = new PhonyBewiedLiteral(v, true);
-//				Literal a2 = new PhonyBewiedLiteral(v, true);
-//				createClause(a, a2);
-//			}
-//		}, new Runnable() {
-//			public void run() { // #2
-//				Variable v = new PhonyBewiedVariable("a");
-//				Literal a = new PhonyBewiedLiteral(v, true);
-//				Literal a2 = createNegativeLiteral(v);
-//				createClause(a, a2);
-//			}
-//		}, new Runnable() {
-//			public void run() { // #3
-//				Variable v = new PhonyBewiedVariable("a");
-//				Literal a = new PhonyBewiedLiteral(v, true);
-//				Literal a2 = createPositiveLiteral(v);
-//				createClause(a, a2);
-//			}
-//		}, new Runnable() {
-//			public void run() { // #4
-//				Variable v = new PhonyBewiedVariable("a");
-//				Literal a = new PhonyBewiedLiteral(v, true);
-//				Literal a2 = new PhonyBewiedLiteral(v, true);
-//				createClause(collect(a, a2));
-//			}
-//		}, new Runnable() {
-//			public void run() { // #5
-//				Variable v = new PhonyBewiedVariable("a");
-//				Literal a = new PhonyBewiedLiteral(v, true);
-//				Literal a2 = createNegativeLiteral(v);
-//				createClause(collect(a, a2));
-//			}
-//		}, new Runnable() {
-//			public void run() { // #6
-//				Variable v = new PhonyBewiedVariable("a");
-//				Literal a = new PhonyBewiedLiteral(v, true);
-//				Literal a2 = createPositiveLiteral(v);
-//				createClause(collect(a, a2));
-//				// I can't think of any other "special" cases
-//			}
-//		} };
-//		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseGood",
-//				", since there are no two (non-identical) variable instances"
-//						+ " who have an equal name", null);
-//	}
+	/**
+	 * Make sure that every combination that is perfectly fine is actually
+	 * recognized, like two EQUAL literals, or multiple occurence of the SAME
+	 * variable.
+	 */
+	@Test
+	public final void testCreateClauseGood() {
+		Runnable[] tests = new Runnable[] { new Runnable() {
+			public void run() { // #1
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = new PhonyBewiedLiteral(v, true);
+				createClause(a, a2);
+			}
+		}, new Runnable() {
+			public void run() { // #2
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = createNegativeLiteral(v);
+				createClause(a, a2);
+			}
+		}, new Runnable() {
+			public void run() { // #3
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = createPositiveLiteral(v);
+				createClause(a, a2);
+			}
+		}, new Runnable() {
+			public void run() { // #4
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = new PhonyBewiedLiteral(v, true);
+				createClause(collect(a, a2));
+			}
+		}, new Runnable() {
+			public void run() { // #5
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = createNegativeLiteral(v);
+				createClause(collect(a, a2));
+			}
+		}, new Runnable() {
+			public void run() { // #6
+				Variable v = new PhonyBewiedVariable("a");
+				Literal a = new PhonyBewiedLiteral(v, true);
+				Literal a2 = createPositiveLiteral(v);
+				createClause(collect(a, a2));
+				// I can't think of any other "special" cases
+			}
+		} };
+		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseGood",
+				", since there are no two (non-identical) variable instances"
+						+ " who have an equal name", null);
+	}
 
+	/**
+	 * Doesn't REALLY test anything, but prints a warning if the user is
+	 * overriding the hashCode() fallback.
+	 */
 	@Test
 	public final void testCreateVariable() {
 		Variable a1 = createVariable("a"), a2 = createVariable("a");
@@ -395,6 +433,11 @@ public class CnfFactoryBewiedTest {
 		void test(T input);
 	}
 
+	@SuppressWarnings("serial")
+	public static final class UnreasonableCallException extends
+			RuntimeException {
+	}
+
 	// ===== Classes =====
 
 	public static final class PhonyBewiedClause extends Clause {
@@ -407,28 +450,36 @@ public class CnfFactoryBewiedTest {
 		}
 
 		@Override
-		public TruthValue getLastTruthValue() {
-			throw new UnsupportedOperationException();
+		public final TruthValue getLastTruthValue() {
+			return TruthValue.UNDEFINED;
 		}
 
 		@Override
-		public Collection<Variable> getVariables() {
-			throw new UnsupportedOperationException();
+		public final Collection<Variable> getVariables() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public Literal getUnitClauseLiteral() {
-			throw new UnsupportedOperationException();
+		public final Literal getUnitClauseLiteral() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public void updateTruthValue() {
-			throw new UnsupportedOperationException();
+		public final void updateTruthValue() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public Literal getPureLiteral() {
-			throw new UnsupportedOperationException();
+		public final Literal getPureLiteral() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 	}
 
@@ -444,38 +495,48 @@ public class CnfFactoryBewiedTest {
 		}
 
 		@Override
-		public TruthValue getTruthValue() {
-			throw new UnsupportedOperationException();
+		public final TruthValue getTruthValue() {
+			return TruthValue.UNDEFINED;
 		}
 
 		@Override
-		public Set<Clause> getClauses() {
+		public final Set<Clause> getClauses() {
 			return clauses;
 		}
 
 		@Override
-		public Collection<Variable> getVariables() {
-			throw new UnsupportedOperationException();
+		public final Collection<Variable> getVariables() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public void resetAllVariables() {
-			throw new UnsupportedOperationException();
+		public final void resetAllVariables() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public Variable getVariableForName(String name) {
-			throw new UnsupportedOperationException();
+		public final Variable getVariableForName(String name) {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public Literal getUnitClauseLiteral() {
-			throw new UnsupportedOperationException();
+		public final Literal getUnitClauseLiteral() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public Literal getPureLiteral() {
-			throw new UnsupportedOperationException();
+		public final Literal getPureLiteral() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 	}
 
@@ -494,42 +555,42 @@ public class CnfFactoryBewiedTest {
 		}
 
 		@Override
-		public TruthValue getTruthValue() {
-			throw new UnsupportedOperationException();
+		public final TruthValue getTruthValue() {
+			return TruthValue.UNDEFINED;
 		}
 
 		@Override
-		public void chooseSatisfyingAssignment() {
+		public final void chooseSatisfyingAssignment() {
 			// IGNORED
 		}
 
 		@Override
-		public Variable getVariable() {
+		public final Variable getVariable() {
 			return v;
 		}
 
 		@Override
-		public void addParentClause(Clause clause) {
+		public final void addParentClause(Clause clause) {
 			// IGNORED
 		}
 
 		@Override
-		public boolean isNegatedLiteral() {
+		public final boolean isNegatedLiteral() {
 			return negated;
 		}
 
 		@Override
-		public boolean isPure() {
+		public final boolean isPure() {
 			return false;
 		}
 
 		@Override
-		public void addDependentClause(Clause clause) {
+		public final void addDependentClause(Clause clause) {
 			// IGNORED
 		}
 
 		@Override
-		public void removeDependentClause(Clause clause) {
+		public final void removeDependentClause(Clause clause) {
 			// IGNORED
 		}
 	}
@@ -549,73 +610,75 @@ public class CnfFactoryBewiedTest {
 		}
 
 		@Override
-		public int hashCode() {
+		public final int hashCode() {
 			return hashCode;
 		}
 
 		@Override
-		public String getName() {
+		public final String getName() {
 			return name;
 		}
 
 		@Override
-		public void setTruthValue(TruthValue newValue) {
+		public final void setTruthValue(TruthValue newValue) {
 			// IGNORED
 		}
 
 		@Override
-		public TruthValue getTruthValue() {
-			throw new UnsupportedOperationException();
+		public final TruthValue getTruthValue() {
+			return TruthValue.UNDEFINED;
 		}
 
 		@Override
-		public void negateValue() {
+		public final void negateValue() {
 			// IGNORED
 		}
 
 		@Override
-		public void addParentClause(Clause clause) {
+		public final void addParentClause(Clause clause) {
 			// IGNORED
 		}
 
 		@Override
-		public Set<Clause> getParentClauses() {
-			throw new UnsupportedOperationException();
+		public final Set<Clause> getParentClauses() {
+			// You shouldn't call this
+			// => FAIL
+			throw new UnreasonableCallException();
 		}
 
 		@Override
-		public void addDependentClausePos(Clause clause) {
+		public final void addDependentClausePos(Clause clause) {
 			// IGNORED
 		}
 
 		@Override
-		public void removeDependentClausePos(Clause clause) {
+		public final void removeDependentClausePos(Clause clause) {
 			// IGNORED
 		}
 
 		@Override
-		public boolean isPurePositive() {
+		public final boolean isPurePositive() {
 			return false;
 		}
 
 		@Override
-		public void addDependentClauseNeg(Clause clause) {
+		public final void addDependentClauseNeg(Clause clause) {
 			// IGNORED
 		}
 
 		@Override
-		public void removeDependentClauseNeg(Clause clause) {
+		public final void removeDependentClauseNeg(Clause clause) {
 			// IGNORED
 		}
 
 		@Override
-		public boolean isPureNegative() {
+		public final boolean isPureNegative() {
 			return false;
 		}
 	}
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.3.1");
+		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.3.2");
 	}
 }
