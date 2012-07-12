@@ -180,56 +180,56 @@ public class CnfFactoryBewiedTest {
 				IllegalArgumentException.class);
 	}
 
-	@Test
-	public final void testCreateClauseGood() {
-		Runnable[] tests = new Runnable[] { new Runnable() {
-			public void run() { // #1
-				Variable v = new PhonyBewiedVariable("a");
-				Literal a = new PhonyBewiedLiteral(v, true);
-				Literal a2 = new PhonyBewiedLiteral(v, true);
-				createClause(a, a2);
-			}
-		}, new Runnable() {
-			public void run() { // #2
-				Variable v = new PhonyBewiedVariable("a");
-				Literal a = new PhonyBewiedLiteral(v, true);
-				Literal a2 = createNegativeLiteral(v);
-				createClause(a, a2);
-			}
-		}, new Runnable() {
-			public void run() { // #3
-				Variable v = new PhonyBewiedVariable("a");
-				Literal a = new PhonyBewiedLiteral(v, true);
-				Literal a2 = createPositiveLiteral(v);
-				createClause(a, a2);
-			}
-		}, new Runnable() {
-			public void run() { // #4
-				Variable v = new PhonyBewiedVariable("a");
-				Literal a = new PhonyBewiedLiteral(v, true);
-				Literal a2 = new PhonyBewiedLiteral(v, true);
-				createClause(collect(a, a2));
-			}
-		}, new Runnable() {
-			public void run() { // #5
-				Variable v = new PhonyBewiedVariable("a");
-				Literal a = new PhonyBewiedLiteral(v, true);
-				Literal a2 = createNegativeLiteral(v);
-				createClause(collect(a, a2));
-			}
-		}, new Runnable() {
-			public void run() { // #6
-				Variable v = new PhonyBewiedVariable("a");
-				Literal a = new PhonyBewiedLiteral(v, true);
-				Literal a2 = createPositiveLiteral(v);
-				createClause(collect(a, a2));
-				// I can't think of any other "special" cases
-			}
-		} };
-		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseGood",
-				", since there are no two (non-identical) variable instances"
-						+ " who have an equal name", null);
-	}
+//	@Test
+//	public final void testCreateClauseGood() {
+//		Runnable[] tests = new Runnable[] { new Runnable() {
+//			public void run() { // #1
+//				Variable v = new PhonyBewiedVariable("a");
+//				Literal a = new PhonyBewiedLiteral(v, true);
+//				Literal a2 = new PhonyBewiedLiteral(v, true);
+//				createClause(a, a2);
+//			}
+//		}, new Runnable() {
+//			public void run() { // #2
+//				Variable v = new PhonyBewiedVariable("a");
+//				Literal a = new PhonyBewiedLiteral(v, true);
+//				Literal a2 = createNegativeLiteral(v);
+//				createClause(a, a2);
+//			}
+//		}, new Runnable() {
+//			public void run() { // #3
+//				Variable v = new PhonyBewiedVariable("a");
+//				Literal a = new PhonyBewiedLiteral(v, true);
+//				Literal a2 = createPositiveLiteral(v);
+//				createClause(a, a2);
+//			}
+//		}, new Runnable() {
+//			public void run() { // #4
+//				Variable v = new PhonyBewiedVariable("a");
+//				Literal a = new PhonyBewiedLiteral(v, true);
+//				Literal a2 = new PhonyBewiedLiteral(v, true);
+//				createClause(collect(a, a2));
+//			}
+//		}, new Runnable() {
+//			public void run() { // #5
+//				Variable v = new PhonyBewiedVariable("a");
+//				Literal a = new PhonyBewiedLiteral(v, true);
+//				Literal a2 = createNegativeLiteral(v);
+//				createClause(collect(a, a2));
+//			}
+//		}, new Runnable() {
+//			public void run() { // #6
+//				Variable v = new PhonyBewiedVariable("a");
+//				Literal a = new PhonyBewiedLiteral(v, true);
+//				Literal a2 = createPositiveLiteral(v);
+//				createClause(collect(a, a2));
+//				// I can't think of any other "special" cases
+//			}
+//		} };
+//		checkTestExceptions(tests, "CnfFactoryBewiedTest#testCreateClauseGood",
+//				", since there are no two (non-identical) variable instances"
+//						+ " who have an equal name", null);
+//	}
 
 	@Test
 	public final void testCreateVariable() {
@@ -616,6 +616,6 @@ public class CnfFactoryBewiedTest {
 
 	@Test
 	public void test_Update() {
-		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.3");
+		SatSolverTestUpdateTool.doUpdateTest("CnfFactoryBewiedTest", "1.3.1");
 	}
 }
