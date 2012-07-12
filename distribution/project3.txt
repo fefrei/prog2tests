@@ -24,6 +24,11 @@ examples|Ben|
 #ExtendedDpllStacktrace.txt
 CorrectDpllStacktrace.txt
 
+# Remove old, corrupted datafile
+examples|Ben|
+-SampleDpllStacktrace.txt
+-ExtendedDpllStacktrace.txt
+
 
 # Felix' Tests
 prog2|project3|tests|
@@ -74,12 +79,3 @@ prog2|project3|tests|
 -Markus007.txt
 -Markus008.txt
 -Markus009.txt
-
-
-# == Beta channel ==
-:2
-
-# Remove old, corrupted datafile
-examples|Ben|
--SampleDpllStacktrace.txt
--ExtendedDpllStacktrace.txt
