@@ -63,8 +63,8 @@ public class SatisfyingAssignmentBewiedTest {
 			Map<String, Boolean> map = new DPLLAlgorithm(c)
 					.getSatisfyingAssignment();
 			if (map == null) {
-				results.add("Your DPLLAlgorithm thought that " + c
-						+ " is unsolvable.\n"
+				results.add("Your DPLLAlgorithm thought that "
+						+ TestUtilFelix.cnfToString(c) + " is unsolvable.\n"
 						+ "Please make sure you pass IntegrationFelixTest.");
 			} else {
 				results.add(checkSatisfied(c, map));
@@ -80,8 +80,9 @@ public class SatisfyingAssignmentBewiedTest {
 			Map<String, Boolean> map = new DPLLAlgorithm(c)
 					.getSatisfyingAssignment();
 			if (map != null) {
-				results.add("Your DPLLAlgorithm thought that " + c
-						+ " is solvable by " + map + ".\n"
+				results.add("Your DPLLAlgorithm thought that "
+						+ TestUtilFelix.cnfToString(c) + " is solvable by "
+						+ map + ".\n"
 						+ "Please make sure you pass IntegrationFelixTest.");
 			} else {
 				results.add(null);
@@ -235,6 +236,6 @@ public class SatisfyingAssignmentBewiedTest {
 	@Test
 	public void test_Update() {
 		SatSolverTestUpdateTool.doUpdateTest("SatisfyingAssignmentBewiedTest",
-				"1.1");
+				"1.1.1");
 	}
 }
