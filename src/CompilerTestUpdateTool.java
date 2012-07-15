@@ -2,6 +2,7 @@ package prog2.project4.tests.prog2tests;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,7 +38,7 @@ public class CompilerTestUpdateTool extends TestCase {
 	// ===== Internal constants =====
 	// You shouldn't need to change anything below this
 
-	private static final String PROJECT_ID = "project4", VERSION = "1.0",
+	private static final String PROJECT_ID = "project4", VERSION = "1.0.1",
 			NAME = "CompilerTestUpdateTool";
 
 	/**
@@ -134,7 +135,8 @@ public class CompilerTestUpdateTool extends TestCase {
 			// We had a problem reading a file that is MOST DEFINITELY there.
 			// => This is "serious".
 			setOffline(testID);
-			System.out.println("<== [FAIL_V] CompilerTestUpdateTool.doUpdateTest()");
+			System.out
+					.println("<== [FAIL_V] CompilerTestUpdateTool.doUpdateTest()");
 			throw new RuntimeException(OFFLINE, e);
 		}
 
@@ -213,11 +215,11 @@ public class CompilerTestUpdateTool extends TestCase {
 		public InstructionReader(BufferedReader r) {
 			this.r = r;
 		}
-		
+
 		public String getPath() {
 			return path;
 		}
-		
+
 		public void setPath(String path) {
 			this.path = path;
 		}
@@ -227,22 +229,40 @@ public class CompilerTestUpdateTool extends TestCase {
 			do {
 				s = r.readLine();
 				if (s == null) {
-					throw new IOException("Unexpected end of stream reached.");
+					return null;
 				}
 				s = s.trim();
 			} while (s.isEmpty() || s.charAt(0) == '#');
 			return s;
 		}
-
-		public final Instruction readInstruction() throws IOException {
-			// Do not use "readNonEmptyLine" here,
-			// it would throw an IOException in case of EOF.
-			// TODO: Use anyway, throw and catch correct exception.
-			String current = r.readLine();
-
-			if (current.isEmpty() || current.startsWith("#")) {
-				return EMPTY_INSTRUCTION;
+		
+		public final String readNonNullNonEmptyLine() throws IOException {
+			String s = readNonEmptyLine();
+			if (s == null) {
+				throw new EOFException();
 			}
+			return s;
+		}
+
+		/**
+		 * Returns the parsed instruction (if one exists), EMPTY_INSTRUCTION if
+		 * there's a good reason to parse it that way, or <code>null</code> if
+		 * the end of stream is reached.
+		 * 
+		 * @throws IOException
+		 *             If there goes anything wrong with the underlying stream,
+		 *             or if one of the instructions fatally couldn't be parsed.
+		 */
+		public final Instruction readInstruction() throws IOException {
+			String current = readNonEmptyLine();
+
+			if (current == null) {
+				return null;
+			}
+
+//			if (current.isEmpty() || current.startsWith("#")) {
+//				return EMPTY_INSTRUCTION;
+//			}
 
 			if (current.contains("..")) {
 				r.close();
@@ -265,12 +285,12 @@ public class CompilerTestUpdateTool extends TestCase {
 			}
 
 			if (current.charAt(0) == '!') {
-				return new SetAttributeInstruction(readNonEmptyLine(),
-						readNonEmptyLine());
+				return new SetAttributeInstruction(readNonNullNonEmptyLine(),
+						readNonNullNonEmptyLine());
 			}
 
 			if (current.charAt(0) == '~') {
-				return new ClearAttributeInstruction(readNonEmptyLine());
+				return new ClearAttributeInstruction(readNonNullNonEmptyLine());
 			}
 
 			if (current.charAt(0) == '?') {
@@ -294,7 +314,7 @@ public class CompilerTestUpdateTool extends TestCase {
 		}
 
 		public final Expression readExpression() throws IOException {
-			final String current = readNonEmptyLine();
+			final String current = readNonNullNonEmptyLine();
 			final String lowCurrent = current.toLowerCase();
 
 			if (lowCurrent.startsWith("not")) {
@@ -302,17 +322,17 @@ public class CompilerTestUpdateTool extends TestCase {
 			} else if (lowCurrent.equals("tr")) {
 				return TRUE_EXPRESSION;
 			} else if (lowCurrent.equals("ha")) {
-				return new HasAttributeExpression(path + readNonEmptyLine());
+				return new HasAttributeExpression(path + readNonNullNonEmptyLine());
 			} else if (lowCurrent.startsWith("is")) {
-				return new IsAttributeSetExpression(readNonEmptyLine());
+				return new IsAttributeSetExpression(readNonNullNonEmptyLine());
 			} else if (lowCurrent.startsWith("lex")) {
-				return new LexicallyHigherExpression(readNonEmptyLine(),
-						readNonEmptyLine());
+				return new LexicallyHigherExpression(readNonNullNonEmptyLine(),
+						readNonNullNonEmptyLine());
 			} else if (lowCurrent.startsWith("eq")) {
-				return new EqualTagExpression(readNonEmptyLine(),
-						readNonEmptyLine());
+				return new EqualTagExpression(readNonNullNonEmptyLine(),
+						readNonNullNonEmptyLine());
 			} else if (lowCurrent.startsWith("ex")) {
-				return new FileExistsExpression(readNonEmptyLine());
+				return new FileExistsExpression(readNonNullNonEmptyLine());
 			} else if (lowCurrent.startsWith("and")) {
 				return new AndExpression(readExpression(), readExpression());
 			} else if (lowCurrent.startsWith("xor")) {
@@ -351,7 +371,7 @@ public class CompilerTestUpdateTool extends TestCase {
 			e = r.readExpression();
 
 			boolean hasOtherwise;
-			
+
 			final String entryPath = r.getPath();
 
 			try {
@@ -363,7 +383,7 @@ public class CompilerTestUpdateTool extends TestCase {
 			} catch (EndifException e) {
 				hasOtherwise = false;
 			}
-			
+
 			r.setPath(entryPath);
 
 			if (hasOtherwise) {
@@ -375,7 +395,7 @@ public class CompilerTestUpdateTool extends TestCase {
 					// Expected this
 				}
 			}
-			
+
 			r.setPath(entryPath);
 		}
 
@@ -461,8 +481,8 @@ public class CompilerTestUpdateTool extends TestCase {
 
 		@Override
 		public int execute() throws IOException {
-			CompilerTestUpdateTool.putAttributes(Collections.singletonMap(tagName,
-					newContent));
+			CompilerTestUpdateTool.putAttributes(Collections.singletonMap(
+					tagName, newContent));
 			return 0;
 		}
 	}
