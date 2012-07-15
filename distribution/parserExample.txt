@@ -1,0 +1,102 @@
+# This is a comment
+This is also a comment
+# But using the '#' sign is just safer.
+# This way, we can use new commands later which are interpreted as comment BY DEFAULT.
+# That means, we don't need to manage a list of 'comment characters' anymore.
+
+# This is an IF-block:
+?if
+# The ?if currently tries to read an EXPRESSION.
+# EXPRESSIONs work in Polish notation.
+# Note that that within the EXPRESSION part, all comments must start with '#'
+
+# Or be the empty line.
+not
+# NOT reads ONE argument.
+XOr
+# We're case-insensitive when it comes to expressions.
+true
+or
+false
+foobarbaz
+# unknown EXPRESSION-IDs are interpreted as "false".
+# If you look closely, you'll see that we reached the end of the EXPRESSION
+
+|examples|Bullshit|
+# That works just as expected.
+# IMPORTANT: You should always end the path with a '|' except you really know what you're doing.
+
+# # This code snippet:
+# |examples|missingPipe
+# Foo.txt
+# Bar.txt
+# # Would download "Foo.txt" and "Bar.txt" into "|examples|missingPipeFoo.txt"
+# # and "|examples|missingPipeBar.txt"
+# # => Might be useful
+
++LogicBroken.java
+# Download file
+
+-Sanity.jar
+# Delete file
+
+?else
+# You can stack ?ifs into one another btw.
+# Just too lazy to demonstrate.
+# Note that with ?else and ?endif the "path"-prefix of the parser snaps back by one level.
+
+!
+sanity
+true
+# Sets the persistent attribute "sanity" to "true".
+# This means that the local "updateTool.cfg" is rewritten.
+
+?endif
+# Close ?if
+
+
+
+|examples|Ben|
+?if
+# note that only the first two characters are checked.
+# This means that "extsts file?", "exterminate" and "extravagant" are extremly equivalent.
+# This means that "has File", "has_file" and "Haystack" are equivalent.
+# Could be abused for obscurring purposes.
+and
+exists file?
+|examples|Ben|SomeFile.txt
+# IMPORTANT: You need to specify the WHOLE path here.
+# Paths are resolved at PARSE time, and the EXPRESSION reader doesn't have full
+# access to the PATH property (yet?)
+not
+is attribute set to true
+# Checks whether the attribute is set to true or something equivalent.
+# Defaults to "false", is attribute does not exist.
+# Compare "has Attribute", which checks whether there is a definition at all.
+fixedSomeFile
+# end of EXPRESSION
+
+~
+allOkay
+# Checks if there was any persistent attribute with this name before, and if so, clears and removes it.
+# This also means that the local "updateTool.cfg" is rewritten.
+
+|fooBarBaz|
+# Sets the new Path WITHIN the current ?if-Block.
+
+?endif
+
+# path is |examples|Ben|, since it was set so before the ?if-Block.
+
+
+# # further EXPRESSIONs that haven't been demonstrated:
+
+# lexically higher
+# # a.k.a. "lex"
+# tagName
+# than
+
+# equal tag content
+# # a.k.a. "eq"
+# tagName
+# than
