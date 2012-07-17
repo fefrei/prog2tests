@@ -1,5 +1,5 @@
 # Change to correct directory
-|prog2|project4|tests|prog2tests|
+prog2|project4|tests|prog2tests|
 # Never forget the last pipe
 
 
@@ -9,4 +9,4 @@
 
 
 # For higher constructs of this language, see:
-# /src/parserExample.txt
+# src|parserExample.txt
