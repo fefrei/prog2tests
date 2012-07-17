@@ -3,9 +3,10 @@
 # Never forget the last pipe
 
 
-+CompilerAndresTest.java
-+TestUtilBewied.java
 # Straightforward: Add (download) these files.
++TestUtilBewied.java
++CompilerAndreasTest.java
+
 
 # For higher constructs of this language, see:
 # /src/parserExample.txt
