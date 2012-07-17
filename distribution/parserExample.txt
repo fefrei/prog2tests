@@ -22,7 +22,7 @@ foobarbaz
 # unknown EXPRESSION-IDs are interpreted as "false".
 # If you look closely, you'll see that we reached the end of the EXPRESSION
 
-|examples|Bullshit|
+examples|Bullshit|
 # That works just as expected.
 # IMPORTANT: You should always end the path with a '|' except you really know what you're doing.
 
@@ -56,7 +56,7 @@ true
 
 
 
-|examples|Ben|
+examples|Ben|
 ?if
 # note that only the first two characters are checked.
 # This means that "extsts file?", "exterminate" and "extravagant" are extremly equivalent.
@@ -64,7 +64,7 @@ true
 # Could be abused for obscurring purposes.
 and
 exists file?
-|examples|Ben|SomeFile.txt
+examples|Ben|SomeFile.txt
 # IMPORTANT: You need to specify the WHOLE path here.
 # Paths are resolved at PARSE time, and the EXPRESSION reader doesn't have full
 # access to the PATH property (yet?)
@@ -81,7 +81,7 @@ allOkay
 # Checks if there was any persistent attribute with this name before, and if so, clears and removes it.
 # This also means that the local "updateTool.cfg" is rewritten.
 
-|fooBarBaz|
+fooBarBaz|
 # Sets the new Path WITHIN the current ?if-Block.
 
 ?endif
