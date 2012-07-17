@@ -14,11 +14,6 @@ public class TestUtilBewied {
 
 	private static final String NULL = "null";
 
-	// ===== Prevent initialization
-
-	private TestUtilBewied() {
-	}
-
 	// ===== Object To String conversion
 
 	public static final String toString(Token t) {
@@ -73,7 +68,7 @@ public class TestUtilBewied {
 
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("TestUtilBewied", "1.0");
+		CompilerTestUpdateTool.doUpdateTest("TestUtilBewied", "1.0.0.0.1");
 	}
 
 	public static interface CustomizedAppendable {
