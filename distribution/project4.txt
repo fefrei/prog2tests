@@ -7,11 +7,5 @@
 +TestUtilBewied.java
 # Straightforward: Add (download) these files.
 
-
-# StatisticsReportTool.java
-# StatisticsReportToolTest.java
-# Why, oh why can't you let me do that? :'(
-
-
 # For higher constructs of this language, see:
 # /src/parserExample.txt
