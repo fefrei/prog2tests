@@ -139,15 +139,18 @@ public class CompilerAndreasTest extends TestBase {
 	}
 
 	@Test
-	public void testIntMax() {
-		// Checks if you completed the bonus task, so Java should not throw an
-		// exception.
-		assertResult("int intMax() { int a = 2147483648; return 5;}", 5);
+	/**
+	 * @author Daniel Steines
+	 */
+	public void testNightly6_Bonus1() throws Exception {
+		assertTypeException(ParseEntity.PRG, "int test() {return 2147483648;}");
+		assertResult(ParseEntity.PRG, "int test() {return -2147483648;}", -2147483648);
+		assertResult(ParseEntity.PRG, "int test() {return 2147483647;}", 2147483647);
 	}
 
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("CompilerAndreasTest", "1.1");
+		CompilerTestUpdateTool.doUpdateTest("CompilerAndreasTest", "1.2");
 	}
 
 }
