@@ -41,7 +41,7 @@ public class MassTestingBewied {
 	public void test_Update() {
 		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.1");
 	}
-	
+
 	// ===== CONSTANTS ====
 	// You shouldn't need to touch those.
 
@@ -96,19 +96,19 @@ public class MassTestingBewied {
 		runWrapped(p);
 	}
 
-//	@Test
-//	public void testNotNot1() {
-//		String text = "int whoIsThere(int a) { return !a; }";
-//		String scope = "(a)";
-//		Program p = new Program(text, scope);
-//		p.add(new Behavior(0, -1));
-//		p.add(new Behavior(-1, 0));
-//		p.add(new Behavior(50, -51));
-//		p.add(new Behavior(-42, 41));
-//		p.add(new Behavior(Integer.MAX_VALUE, Integer.MIN_VALUE));
-//		p.add(new Behavior(Integer.MIN_VALUE, Integer.MAX_VALUE));
-//		runWrapped(p);
-//	}
+	// @Test
+	// public void testNotNot1() {
+	// String text = "int whoIsThere(int a) { return !a; }";
+	// String scope = "(a)";
+	// Program p = new Program(text, scope);
+	// p.add(new Behavior(0, -1));
+	// p.add(new Behavior(-1, 0));
+	// p.add(new Behavior(50, -51));
+	// p.add(new Behavior(-42, 41));
+	// p.add(new Behavior(Integer.MAX_VALUE, Integer.MIN_VALUE));
+	// p.add(new Behavior(Integer.MIN_VALUE, Integer.MAX_VALUE));
+	// runWrapped(p);
+	// }
 
 	@Test
 	public void testNotNot2() {
@@ -148,15 +148,17 @@ public class MassTestingBewied {
 				10, 0, 10);
 	}
 
-//	@Test
-//	public void testNotEquals() {
-//		runBinopTest("!=", "int", "int", 3, 4, 1, /**/-3, 4, 1, /**/-1, 1, 1, /**/
-//				-30, -50, 1, /**/0, -5, 1, /**/Integer.MAX_VALUE, -1, 1, /**/
-//				-Integer.MAX_VALUE, 1, 1, /**/7, 7, 0, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 0, /**/
-//				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
-//		runBinopTest("!=", "bool", "int", 0, 0, 0, /**/0, 1, 1, /**/1, 0, 1, /**/
-//				1, 1, 0);
-//	}
+	// @Test
+	// public void testNotEquals() {
+	// runBinopTest("!=", "int", "int", 3, 4, 1, /**/-3, 4, 1, /**/-1, 1, 1,
+	// /**/
+	// -30, -50, 1, /**/0, -5, 1, /**/Integer.MAX_VALUE, -1, 1, /**/
+	// -Integer.MAX_VALUE, 1, 1, /**/7, 7, 0, /**/Integer.MAX_VALUE,
+	// Integer.MAX_VALUE, 0, /**/
+	// -Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
+	// runBinopTest("!=", "bool", "int", 0, 0, 0, /**/0, 1, 1, /**/1, 0, 1, /**/
+	// 1, 1, 0);
+	// }
 
 	@Test
 	public void testAddition() {
@@ -209,33 +211,36 @@ public class MassTestingBewied {
 				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
 	}
 
-//	@Test
-//	public void testGreaterThanEquals() {
-//		runBinopTest(">=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1, /**/
-//				-1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
-//				-Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE, -Integer.MAX_VALUE,
-//				0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
-//				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
-//	}
+	// @Test
+	// public void testGreaterThanEquals() {
+	// runBinopTest(">=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1,
+	// /**/
+	// -1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
+	// -Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
+	// -Integer.MAX_VALUE,
+	// 0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
+	// -Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
+	// }
 
-//	@Test
-//	public void testShiftRight() {
-//		// 0xFFFF8001 = -32767
-//		// 0xFFFFFF80 = -32767>>8 = -128
-//		// 0x00007FFF = +32767
-//		// 0x0000007F = +32767>>8 = 127
-//		runBinopTest(">>", "int", "int", 1, 1, 2, /**/0, 4, 0, /**/-32767, 8, -128, /**/32767, 8, 127, /**/
-//				-1, 31, 1);
-//	}
+	// @Test
+	// public void testShiftRight() {
+	// // 0xFFFF8001 = -32767
+	// // 0xFFFFFF80 = -32767>>8 = -128
+	// // 0x00007FFF = +32767
+	// // 0x0000007F = +32767>>8 = 127
+	// runBinopTest(">>", "int", "int", 1, 1, 2, /**/0, 4, 0, /**/-32767, 8,
+	// -128, /**/32767, 8, 127, /**/
+	// -1, 31, 1);
+	// }
 
-//	@Test
-//	public void testShiftLeft() {
-//		// 0xFFFF8001 = -32767
-//		// 0x00007FFF = +32767
-//		runBinopTest("<<", "int", "int", 3, 4, 0x30, /**/-3, 4, 0xFFFD0000, /**/
-//				-1, 1, -2, /**/1, 1, 2, /**/0, 4, 0, /**/-32767, 8, 0xFF800100, /**/
-//				32767, 8, 0x7FFF0000, /**/-1, 31, Integer.MIN_VALUE);
-//	}
+	// @Test
+	// public void testShiftLeft() {
+	// // 0xFFFF8001 = -32767
+	// // 0x00007FFF = +32767
+	// runBinopTest("<<", "int", "int", 3, 4, 0x30, /**/-3, 4, 0xFFFD0000, /**/
+	// -1, 1, -2, /**/1, 1, 2, /**/0, 4, 0, /**/-32767, 8, 0xFF800100, /**/
+	// 32767, 8, 0x7FFF0000, /**/-1, 31, Integer.MIN_VALUE);
+	// }
 
 	@Test
 	public void testStackedIf() {
