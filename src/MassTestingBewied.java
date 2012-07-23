@@ -39,7 +39,7 @@ public class MassTestingBewied {
 
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.1");
+		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.2");
 	}
 
 	// ===== CONSTANTS ====
@@ -193,14 +193,16 @@ public class MassTestingBewied {
 				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
 	}
 
-	@Test
-	public void testLessThanEquals() {
-		runBinopTest("<=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1, /**/
-				-1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
-				-Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE, -Integer.MAX_VALUE,
-				0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
-				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
-	}
+	// @Test
+	// public void testLessThanEquals() {
+	// runBinopTest("<=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1,
+	// /**/
+	// -1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
+	// -Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
+	// -Integer.MAX_VALUE,
+	// 0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
+	// -Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
+	// }
 
 	@Test
 	public void testGreaterThan() {
@@ -211,16 +213,16 @@ public class MassTestingBewied {
 				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
 	}
 
-	// @Test
-	// public void testGreaterThanEquals() {
-	// runBinopTest(">=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1,
-	// /**/
-	// -1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
-	// -Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
-	// -Integer.MAX_VALUE,
-	// 0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
-	// -Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
-	// }
+	 @Test
+	 public void testGreaterThanEquals() {
+	 runBinopTest(">=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1,
+	 /**/
+	 -1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
+	 -Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
+	 -Integer.MAX_VALUE,
+	 0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
+	 -Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
+	 }
 
 	// @Test
 	// public void testShiftRight() {
