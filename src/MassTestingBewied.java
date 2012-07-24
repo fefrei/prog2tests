@@ -36,24 +36,25 @@ import de.unisb.prog.mips.simulator.Sys;
 import de.unisb.prog.mips.simulator.SysCallHandler;
 
 public class MassTestingBewied {
-
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.2");
+		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.3");
 	}
 
 	// ===== CONSTANTS ====
 	// You shouldn't need to touch those.
 
 	// I have no idea what this does:
-	private static final boolean DEBUG_DRIVER = true;
+	private static final boolean DEBUG_DRIVER = false;
 
 	// Prevent typos:
 	private static final String TIMEOUT_ATTRIBUTE = "mass_timeout",
 			OPTIMIZE_ATTRIBUTE = "optimize";
+	// Also, guess what you have to write into updateTool.cfg to enable testing
+	// of your optimized CodeGen.
 
 	// Amount of milliseconds before a given test is aborted.
-	// I'd recommend around 20 seconds, that means 3 * 1000 milliseconds.
+	// I'd recommend around 7 seconds, that means 7 * 1000 milliseconds.
 	// Don't worry, java does constant-folding.
 	private static final int DEFAULT_TIMEOUT = 7 * 1000;
 
@@ -96,22 +97,8 @@ public class MassTestingBewied {
 		runWrapped(p);
 	}
 
-	// @Test
-	// public void testNotNot1() {
-	// String text = "int whoIsThere(int a) { return !a; }";
-	// String scope = "(a)";
-	// Program p = new Program(text, scope);
-	// p.add(new Behavior(0, -1));
-	// p.add(new Behavior(-1, 0));
-	// p.add(new Behavior(50, -51));
-	// p.add(new Behavior(-42, 41));
-	// p.add(new Behavior(Integer.MAX_VALUE, Integer.MIN_VALUE));
-	// p.add(new Behavior(Integer.MIN_VALUE, Integer.MAX_VALUE));
-	// runWrapped(p);
-	// }
-
 	@Test
-	public void testNotNot2() {
+	public void testNotNot() {
 		String text = "boolean whoIsThere(boolean a) { return !a; }";
 		String scope = "(a)";
 		Program p = new Program(text, scope);
@@ -122,11 +109,14 @@ public class MassTestingBewied {
 
 	@Test
 	public void testEquals() {
-		runBinopTest("==", "int", "boolean", 3, 4, 0, /**/-3, 4, 0, /**/-1, 1, 0, /**/
+		runBinopTest("==", "int", "boolean", 3, 4, 0, /**/-3, 4, 0, /**/-1, 1,
+				0, /**/
 				-30, -50, 0, /**/0, -5, 0, /**/Integer.MAX_VALUE, -1, 0, /**/
-				-Integer.MAX_VALUE, 1, 0, /**/7, 7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
-				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
-		runBinopTest("==", "boolean", "boolean", 0, 0, 1, /**/0, 1, 0, /**/1, 0, 0, /**/
+				-Integer.MAX_VALUE, 1, 0, /**/7, 7, 1, /**/Integer.MAX_VALUE,
+				Integer.MAX_VALUE, 1, /**/-Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 1);
+		runBinopTest("==", "boolean", "boolean", 0, 0, 1, /**/0, 1, 0, /**/1, 0,
+				0, /**/
 				1, 1, 1);
 	}
 
@@ -144,21 +134,22 @@ public class MassTestingBewied {
 		// 0b0011 = 3
 		// 0b0101 = 5
 		// 0b0111 = 7
-		runBinopTest("|", "int", "int", 3, 5, 7, /**/10, Integer.MAX_VALUE, Integer.MAX_VALUE, /**/
-				10, 0, 10);
+		runBinopTest("|", "int", "int", 3, 5, 7, /**/10, Integer.MAX_VALUE,
+				Integer.MAX_VALUE, /**/10, 0, 10);
 	}
 
-	// @Test
-	// public void testNotEquals() {
-	// runBinopTest("!=", "int", "int", 3, 4, 1, /**/-3, 4, 1, /**/-1, 1, 1,
-	// /**/
-	// -30, -50, 1, /**/0, -5, 1, /**/Integer.MAX_VALUE, -1, 1, /**/
-	// -Integer.MAX_VALUE, 1, 1, /**/7, 7, 0, /**/Integer.MAX_VALUE,
-	// Integer.MAX_VALUE, 0, /**/
-	// -Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
-	// runBinopTest("!=", "bool", "int", 0, 0, 0, /**/0, 1, 1, /**/1, 0, 1, /**/
-	// 1, 1, 0);
-	// }
+	@Test
+	public void testNotEquals() {
+		runBinopTest("!=", "int", "boolean", 3, 4, 1, /**/-3, 4, 1, /**/-1, 1,
+				1, /**/
+				-30, -50, 1, /**/0, -5, 1, /**/Integer.MAX_VALUE, -1, 1, /**/
+				-Integer.MAX_VALUE, 1, 1, /**/7, 7, 0, /**/Integer.MAX_VALUE,
+				Integer.MAX_VALUE, 0, /**/-Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 0);
+		runBinopTest("!=", "boolean", "boolean", 0, 0, 0, /**/0, 1, 1, /**/1, 0,
+				1, /**/
+				1, 1, 0);
+	}
 
 	@Test
 	public void testAddition() {
@@ -188,131 +179,136 @@ public class MassTestingBewied {
 	public void testLessThan() {
 		runBinopTest("<", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1, /**/
 				-1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
-				-Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE, -Integer.MAX_VALUE,
-				0, /**/-7, -7, 0, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 0, /**/
-				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
+				-Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 0, /**/-7, -7, 0, /**/Integer.MAX_VALUE,
+				Integer.MAX_VALUE, 0, /**/-Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 0);
 	}
 
-	// @Test
-	// public void testLessThanEquals() {
-	// runBinopTest("<=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1,
-	// /**/
-	// -1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
-	// -Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
-	// -Integer.MAX_VALUE,
-	// 0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
-	// -Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
-	// }
+	@Test
+	public void testLessThanEquals() {
+		runBinopTest("<=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1, /**/
+				-1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
+				-Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 0, /**/-7, -7, 1, /**/Integer.MAX_VALUE,
+				Integer.MAX_VALUE, 1, /**/-Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 1);
+	}
 
 	@Test
 	public void testGreaterThan() {
 		runBinopTest(">", "int", "boolean", 3, 4, 0, /**/4, 3, 1, /**/-3, 4, 0, /**/
 				-1, 1, 0, /**/-30, -50, 1, /**/0, -5, 1, /**/
-				-Integer.MAX_VALUE, Integer.MAX_VALUE, 0, /**/Integer.MAX_VALUE, -Integer.MAX_VALUE,
-				1, /**/-7, -7, 0, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 0, /**/
-				-Integer.MAX_VALUE, -Integer.MAX_VALUE, 0);
+				-Integer.MAX_VALUE, Integer.MAX_VALUE, 0, /**/Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 1, /**/-7, -7, 0, /**/Integer.MAX_VALUE,
+				Integer.MAX_VALUE, 0, /**/-Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 0);
 	}
 
-	 @Test
-	 public void testGreaterThanEquals() {
-	 runBinopTest(">=", "int", "boolean", 3, 4, 1, /**/4, 3, 0, /**/-3, 4, 1,
-	 /**/
-	 -1, 1, 1, /**/-30, -50, 0, /**/0, -5, 0, /**/
-	 -Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/Integer.MAX_VALUE,
-	 -Integer.MAX_VALUE,
-	 0, /**/-7, -7, 1, /**/Integer.MAX_VALUE, Integer.MAX_VALUE, 1, /**/
-	 -Integer.MAX_VALUE, -Integer.MAX_VALUE, 1);
-	 }
+	@Test
+	public void testGreaterThanEquals() {
+		runBinopTest(">=", "int", "boolean", 3, 4, 0, /**/4, 3, 1, /**/-3, 4, 0, /**/
+				-1, 1, 0, /**/-30, -50, 1, /**/0, -5, 1, /**/
+				-Integer.MAX_VALUE, Integer.MAX_VALUE, 0, /**/Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 1, /**/-7, -7, 1, /**/Integer.MAX_VALUE,
+				Integer.MAX_VALUE, 1, /**/-Integer.MAX_VALUE,
+				-Integer.MAX_VALUE, 1);
+	}
 
-	// @Test
-	// public void testShiftRight() {
-	// // 0xFFFF8001 = -32767
-	// // 0xFFFFFF80 = -32767>>8 = -128
-	// // 0x00007FFF = +32767
-	// // 0x0000007F = +32767>>8 = 127
-	// runBinopTest(">>", "int", "int", 1, 1, 2, /**/0, 4, 0, /**/-32767, 8,
-	// -128, /**/32767, 8, 127, /**/
-	// -1, 31, 1);
-	// }
+	@Test
+	public void testShiftRight() {
+		// 0xFFFF8001 = -32767
+		// 0xFFFFFF80 = -32767>>8 = -128
+		// 0x00007FFF = +32767
+		// 0x0000007F = +32767>>8 = 127
+		runBinopTest(">>", "int", "int", 1, 1, 0, /**/0, 4, 0, /**/-32767, 8,
+				-128, /**/32767, 8, 127, /**/-1, 31, -1);
+	}
 
-	// @Test
-	// public void testShiftLeft() {
-	// // 0xFFFF8001 = -32767
-	// // 0x00007FFF = +32767
-	// runBinopTest("<<", "int", "int", 3, 4, 0x30, /**/-3, 4, 0xFFFD0000, /**/
-	// -1, 1, -2, /**/1, 1, 2, /**/0, 4, 0, /**/-32767, 8, 0xFF800100, /**/
-	// 32767, 8, 0x7FFF0000, /**/-1, 31, Integer.MIN_VALUE);
-	// }
+	@Test
+	public void testShiftLeft() {
+		// 0xFFFF8001 = -32767
+		// 0x00007FFF = +32767
+		runBinopTest("<<", "int", "int", 3, 4, 0x30, /**/-3, 16, 0xFFFD0000, /**/
+				-1, 1, -2, /**/1, 1, 2, /**/0, 4, 0, /**/-32767, 8, 0xFF800100, /**/
+				32767, 16, 0x7FFF0000, /**/-1, 31, Integer.MIN_VALUE);
+	}
 
 	@Test
 	public void testStackedIf() {
 		/**
 		 * <pre>
+		 * Better readable version of the TinyJava code:
+		 * 
 		 * foo (int a) {
 		 * int retVal = 0;
 		 * if (a > 0) {
-		 *              if (a > 5) {
-		 *                      retVal = 10;
-		 *              } else {
-		 *                      retVal = 3;
-		 *              }
+		 * 		if (a > 5) {
+		 * 			retVal = 10;
+		 * 		} else {
+		 * 			retVal = 3;
+		 * 		}
 		 * } else {
-		 *              if (a < -5) {
-		 *                      retVal = -10;
-		 *              } else {
-		 *                      retVal = -3;
-		 *              }
+		 * 		if (a < -5) {
+		 * 			retVal = -10;
+		 * 		} else {
+		 * 			retVal = -3;
+		 * 		}
 		 * }
 		 * return retVal;
 		 * }
 		 * 
+		 * The AST of that:
+		 * 
 		 * FunctionTree[IDENT:foo](
-		 *              ListTree[LIST:null](
-		 *                      ParamDeclTree[IDENT:a]{INT, #0}()),
-		 *              ListTree[LIST:null](
-		 *                      AssignTree[=:null](
-		 *                              DeclTree[IDENT:retVal]{INT}(),
-		 *                              IntLitTree[INT_LITERAL:0]()),
-		 *                      TernaryTree[if:if](
-		 *                              IntBoolBinopTree[>:null](
-		 *                                      IdentUseTree[IDENT:a]{Defined in null}(),
-		 *                                      IntLitTree[INT_LITERAL:0]()),
-		 *                              ListTree[LIST:null](
-		 *                                      TernaryTree[if:if](
-		 *                                              IntBoolBinopTree[>:null](
-		 *                                                      IdentUseTree[IDENT:a]{Defined in null}(),
-		 *                                                      IntLitTree[INT_LITERAL:5]()),
-		 *                                              ListTree[LIST:null](
-		 *                                                      AssignTree[=:null](
-		 *                                                              IdentUseTree[IDENT:retVal]{Defined in null}(),
-		 *                                                              IntLitTree[INT_LITERAL:10]())),
-		 *                                              ListTree[LIST:null](
-		 *                                                      AssignTree[=:null](
-		 *                                                              IdentUseTree[IDENT:retVal]{Defined in null}(),
-		 *                                                              IntLitTree[INT_LITERAL:3]())))),
-		 *                              ListTree[LIST:null](
-		 *                                      TernaryTree[if:if](
-		 *                                              IntBoolBinopTree[<:null](
-		 *                                                      IdentUseTree[IDENT:a]{Defined in null}(),
-		 *                                                      IntUnopTree[-:null](
-		 *                                                              IntLitTree[INT_LITERAL:5]())),
-		 *                                              ListTree[LIST:null](
-		 *                                                      AssignTree[=:null](
-		 *                                                              IdentUseTree[IDENT:retVal]{Defined in null}(),
-		 *                                                              IntUnopTree[-:null](
-		 *                                                                      IntLitTree[INT_LITERAL:10]()))),
-		 *                                              ListTree[LIST:null](
-		 *                                                      AssignTree[=:null](
-		 *                                                              IdentUseTree[IDENT:retVal]{Defined in null}(),
-		 *                                                              IntUnopTree[-:null](
-		 *                                                                      IntLitTree[INT_LITERAL:3]())))))),
-		 *                      IdentUseTree[IDENT:retVal]{Defined in null}()))
+		 * 		ListTree[LIST:null](
+		 * 			ParamDeclTree[IDENT:a]{INT, #0}()),
+		 * 		ListTree[LIST:null](
+		 * 			AssignTree[=:null](
+		 * 				DeclTree[IDENT:retVal]{INT}(),
+		 * 				IntLitTree[INT_LITERAL:0]()),
+		 * 			TernaryTree[if:if](
+		 * 				IntBoolBinopTree[>:null](
+		 * 					IdentUseTree[IDENT:a]{Defined in null}(),
+		 * 					IntLitTree[INT_LITERAL:0]()),
+		 * 				ListTree[LIST:null](
+		 * 					TernaryTree[if:if](
+		 * 						IntBoolBinopTree[>:null](
+		 * 							IdentUseTree[IDENT:a]{Defined in null}(),
+		 * 							IntLitTree[INT_LITERAL:5]()),
+		 * 						ListTree[LIST:null](
+		 * 							AssignTree[=:null](
+		 * 								IdentUseTree[IDENT:retVal]{Defined in null}(),
+		 * 								IntLitTree[INT_LITERAL:10]())),
+		 * 						ListTree[LIST:null](
+		 * 							AssignTree[=:null](
+		 * 								IdentUseTree[IDENT:retVal]{Defined in null}(),
+		 * 								IntLitTree[INT_LITERAL:3]())))),
+		 * 				ListTree[LIST:null](
+		 * 					TernaryTree[if:if](
+		 * 						IntBoolBinopTree[<:null](
+		 * 							IdentUseTree[IDENT:a]{Defined in null}(),
+		 * 							IntUnopTree[-:null](
+		 * 								IntLitTree[INT_LITERAL:5]())),
+		 * 						ListTree[LIST:null](
+		 * 							AssignTree[=:null](
+		 * 								IdentUseTree[IDENT:retVal]{Defined in null}(),
+		 * 								IntUnopTree[-:null](
+		 * 									IntLitTree[INT_LITERAL:10]()))),
+		 * 						ListTree[LIST:null](
+		 * 							AssignTree[=:null](
+		 * 								IdentUseTree[IDENT:retVal]{Defined in null}(),
+		 * 								IntUnopTree[-:null](
+		 * 									IntLitTree[INT_LITERAL:3]())))))),
+		 * 			IdentUseTree[IDENT:retVal]{Defined in null}()))
 		 * </pre>
 		 */
 
 		String text = "int foo(int a) { int retVal = 0; if (a > 0) {"
-				+ " if (a > 5) { retVal = 10; } else { retVal = 3; }" + " } else {"
-				+ " if (a < -5) { retVal = -10; } else { retVal = -3; }" + " } return retVal; }";
+				+ " if (a > 5) { retVal = 10; } else { retVal = 3; }"
+				+ " } else {"
+				+ " if (a < -5) { retVal = -10; } else { retVal = -3; }"
+				+ " } return retVal; }";
 		String scope = "(a, retVal (()()) (()()))";
 		Program p = new Program(text, scope);
 		p.add(new Behavior(50, 10));
@@ -338,7 +334,8 @@ public class MassTestingBewied {
 
 	@Test
 	public void testArgumentWrite() {
-		String text = "int getAnswer(int a, int b) {" + " b = 42 - a; return a + b; }";
+		String text = "int getAnswer(int a, int b) {"
+				+ " b = 42 - a; return a + b; }";
 		String scope = "(a, b)";
 		Program p = new Program(text, scope);
 		p.add(new Behavior(new int[] { 13, 42 }, 42));
@@ -395,15 +392,15 @@ public class MassTestingBewied {
 		/**
 		 * <code>
 		 * boolean foo(int a, int b) {
-		 *      while (a > 0) {
-		 *              int tmp = b;
-		 *              while (tmp > 0) {
-		 *                      print((a << 4) + tmp);
-		 *                      tmp = tmp - 1;
-		 *              }
-		 *              a = a - 1;
-		 *      }
-		 *      return false;
+		 * 	while (a > 0) {
+		 * 		int tmp = b;
+		 * 		while (tmp > 0) {
+		 * 			print((a << 4) + tmp);
+		 * 			tmp = tmp - 1;
+		 * 		}
+		 * 		a = a - 1;
+		 * 	}
+		 * 	return false;
 		 * }
 		 * </code>
 		 */
@@ -414,13 +411,15 @@ public class MassTestingBewied {
 		p.add(new Behavior(new int[] { 321, -123 }, EMPTY, 0));
 		p.add(new Behavior(new int[] { -321, 123 }, EMPTY, 0));
 		p.add(new Behavior(new int[] { 1, 1 }, new int[] { 0x11 }, 0));
-		p.add(new Behavior(new int[] { 3, 2 }, new int[] { 0x32, 0x31, 0x22, 0x21, 0x12, 0x11 }, 0));
+		p.add(new Behavior(new int[] { 3, 2 }, new int[] { 0x32, 0x31, 0x22,
+				0x21, 0x12, 0x11 }, 0));
 		runWrapped(p);
 	}
 
 	@Test
 	public void testStackedDoWhile() {
-		String text = "boolean foo(int a, int b) { int bOrig = b; " + " do { b = bOrig;"
+		String text = "boolean foo(int a, int b) { int bOrig = b; "
+				+ " do { b = bOrig;"
 				+ " do { print ((a << 4) | b); b = b - 1; } while (b > 0);"
 				+ " a = a - 1; } while (a > 0); return false; }";
 		String scope = "(a, b, bOrig (()))";
@@ -442,7 +441,8 @@ public class MassTestingBewied {
 		// 0b____10101111 = -128 + 32 + 8 + 4 + 2 + 1 = -96 + 15 = -81
 		// 0b111111101111 = -17
 		p.add(new Behavior(new int[] { -4, -81 }, new int[] { -17 }, 0));
-		p.add(new Behavior(new int[] { 3, 2 }, new int[] { 0x32, 0x31, 0x22, 0x21, 0x12, 0x11 }, 0));
+		p.add(new Behavior(new int[] { 3, 2 }, new int[] { 0x32, 0x31, 0x22,
+				0x21, 0x12, 0x11 }, 0));
 		runWrapped(p);
 	}
 
@@ -475,7 +475,8 @@ public class MassTestingBewied {
 	@Test
 	public void testBlocks() {
 		String text = "int foo(int a) { { int b = a + 3; print (b); } "
-				+ " { int b = a + 2; print (b-1); }" + " int b = a + 1; return b - 3; }";
+				+ " { int b = a + 2; print (b-1); }"
+				+ " int b = a + 1; return b - 3; }";
 		String scope = "(a, b (b) (b))";
 		Program p = new Program(text, scope);
 		p.add(new Behavior(0, new int[] { 3, 1 }, -2));
@@ -495,9 +496,12 @@ public class MassTestingBewied {
 		// They order the names lexically.
 		String scope = "(a, max, min)";
 		Program p = new Program(text, scope);
-		p.add(new Behavior(0, new int[] { Integer.MIN_VALUE, Integer.MAX_VALUE }, 1));
-		p.add(new Behavior(Short.MIN_VALUE, new int[] { Integer.MIN_VALUE, Integer.MAX_VALUE }, 1));
-		p.add(new Behavior(Short.MAX_VALUE, new int[] { Integer.MIN_VALUE, Integer.MAX_VALUE }, 1));
+		p.add(new Behavior(0,
+				new int[] { Integer.MIN_VALUE, Integer.MAX_VALUE }, 1));
+		p.add(new Behavior(Short.MIN_VALUE, new int[] { Integer.MIN_VALUE,
+				Integer.MAX_VALUE }, 1));
+		p.add(new Behavior(Short.MAX_VALUE, new int[] { Integer.MIN_VALUE,
+				Integer.MAX_VALUE }, 1));
 		runWrapped(p);
 	}
 
@@ -524,34 +528,37 @@ public class MassTestingBewied {
 	// ===== HELPERS and official interface
 	// Fell free to use them :)
 
-	public static final void runBinopTest(String operator, String inType, String outType,
-			int... data) {
+	public static final void runBinopTest(String operator, String inType,
+			String outType, int... data) {
 		if (data.length % 3 != 0) {
 			throw new IllegalArgumentException("You have to supply triples of"
 					+ " data: left, right, result.\nExample:"
 					+ " runBinopTest(\"+\", 1, 2, 3, 9, 9, 18)");
 		}
 
-		String text = outType + " foo(" + inType + " a, " + inType + " b) { return a " + operator
-				+ " b; }";
+		String text = outType + " foo(" + inType + " a, " + inType
+				+ " b) { return a " + operator + " b; }";
 		String scope = "(a, b)";
 		Program p = new Program(text, scope);
 		for (int i = 0; i * 3 < data.length; i++) {
 			final int i3 = i * 3;
-			p.add(new Behavior(new int[] { data[i3], data[i3 + 1] }, EMPTY, data[i3 + 2]));
+			p.add(new Behavior(new int[] { data[i3], data[i3 + 1] }, EMPTY,
+					data[i3 + 2]));
 		}
 		runWrapped(p);
 	}
 
 	public static final void runWrapped(Program p) {
-		runWrapped(p, CompilerTestUpdateTool.getAttribute(TIMEOUT_ATTRIBUTE, DEFAULT_TIMEOUT));
+		runWrapped(p, CompilerTestUpdateTool.getAttribute(TIMEOUT_ATTRIBUTE,
+				DEFAULT_TIMEOUT));
 	}
 
 	public static final void runWrapped(Program p, int timeout) {
 		// Make sure the timer doesn't die or does something unexpected
 		Timer t = new Timer(false);
 		StatefulRunnable sr = new StatefulRunnable(p);
-		t.schedule(new TimeoutTask(Thread.currentThread(), sr, timeout), timeout);
+		t.schedule(new TimeoutTask(Thread.currentThread(), sr, timeout),
+				timeout);
 		sr.run();
 	}
 
@@ -567,7 +574,8 @@ public class MassTestingBewied {
 		}
 
 		public TimeoutTask(Thread t, StatefulRunnable r, int timeout) {
-			this(t, r, "Still running after " + timeout + " ms, killed (aborted).");
+			this(t, r, "Still running after " + timeout
+					+ " ms, killed (aborted).");
 		}
 
 		@SuppressWarnings("deprecation")
@@ -704,7 +712,8 @@ public class MassTestingBewied {
 				if (length != behaviors.get(i).input.length) {
 					throw new IllegalArgumentException("The input of the first"
 							+ " Behavior has length " + length + ", the " + i
-							+ "th input has length " + behaviors.get(i).input.length);
+							+ "th input has length "
+							+ behaviors.get(i).input.length);
 				}
 			}
 		}
@@ -720,7 +729,8 @@ public class MassTestingBewied {
 			if (DEBUG_DRIVER) {
 				try {
 					asm.append(System.out);
-					System.out.println("Result will be expected in " + resultReg);
+					System.out.println("Result will be expected in "
+							+ resultReg);
 				} catch (IOException e) {
 					// This shouldn't happen anyway
 				}
@@ -737,7 +747,8 @@ public class MassTestingBewied {
 					runCaller(i);
 				} catch (Throwable e) {
 					throw new RuntimeException("During behavioral test #" + i
-							+ " (starting with #0) an error occurred.\n" + "Input was "
+							+ " (starting with #0) an error occurred.\n"
+							+ "Input was "
 							+ Arrays.toString(behaviors.get(i).input) + " ("
 							+ behaviors.get(i).input.length + " arguments)", e);
 				}
@@ -756,9 +767,11 @@ public class MassTestingBewied {
 			try {
 				checkScopesNamesTypes();
 			} catch (NamingException e) {
-				throw new RuntimeException("Analyze names failed unexpectedly", e);
+				throw new RuntimeException("Analyze names failed unexpectedly",
+						e);
 			} catch (TypingException e) {
-				throw new RuntimeException("Compute type failed unexpectedly", e);
+				throw new RuntimeException("Compute type failed unexpectedly",
+						e);
 			}
 		}
 
@@ -769,7 +782,8 @@ public class MassTestingBewied {
 			} catch (NamingException e) {
 				// Expected
 			} catch (TypingException e) {
-				throw new RuntimeException("Compute type failed unexpectedly", e);
+				throw new RuntimeException("Compute type failed unexpectedly",
+						e);
 			}
 		}
 
@@ -778,13 +792,15 @@ public class MassTestingBewied {
 				checkScopesNamesTypes();
 				fail("Expected TypingException to be thrown. you threw nothing.");
 			} catch (NamingException e) {
-				throw new RuntimeException("Analyze names failed unexpectedly", e);
+				throw new RuntimeException("Analyze names failed unexpectedly",
+						e);
 			} catch (TypingException e) {
 				// expected
 			}
 		}
 
-		private final void checkScopesNamesTypes() throws NamingException, TypingException {
+		private final void checkScopesNamesTypes() throws NamingException,
+				TypingException {
 			// This is copied from TestBase.java.
 			// Thank you for supplying this code :D
 
@@ -813,7 +829,8 @@ public class MassTestingBewied {
 			try {
 				asm.getText().label(USER_START);
 			} catch (LabelAlreadyDefinedException e) {
-				throw new IllegalStateException("The label __start may not be defined otherwise");
+				throw new IllegalStateException(
+						"The label __start may not be defined otherwise");
 			}
 			resultReg = generate(programTree, asm);
 		}
@@ -824,8 +841,8 @@ public class MassTestingBewied {
 			try {
 				asm.getText().label(labelName);
 			} catch (LabelAlreadyDefinedException e) {
-				throw new IllegalStateException("startup code label " + labelName
-						+ " already defined");
+				throw new IllegalStateException("startup code label "
+						+ labelName + " already defined");
 			}
 
 			// Treat the arguments correctly
@@ -864,7 +881,8 @@ public class MassTestingBewied {
 			proc.run(true);
 
 			expector.assertComplete();
-			assertEquals("Results differed ", b.expectedResult, proc.gp[resultReg.ordinal()]);
+			assertEquals("Results differed ", b.expectedResult,
+					proc.gp[resultReg.ordinal()]);
 		}
 	}
 
@@ -875,9 +893,10 @@ public class MassTestingBewied {
 	 * fields private.
 	 */
 	public static final ExceptionHandler EXEPTION_HANDLER = new ExceptionHandler() {
-		private void handle(String msg, ProcessorState state, Memory mem, int addr) {
+		private void handle(String msg, Memory mem, int addr) {
 			try {
-				System.err.format("processor exception: %s at %08x\n", msg, addr);
+				System.err.println("Processor exception: " + msg + " at "
+						+ addr);
 				System.err.println("memory dump:");
 				mem.dump(System.out, addr - 16, 32, MemDumpFormatter.DATA);
 				System.err.println("disassembly:");
@@ -889,17 +908,18 @@ public class MassTestingBewied {
 
 		@Override
 		public void unalignedMemory(ProcessorState state, Memory mem, int addr) {
-			handle("unaligned memory", state, mem, addr);
+			handle("unaligned memory", mem, addr);
 		}
 
 		@Override
 		public void overflow(ProcessorState state, Memory mem, int addr) {
-			handle("integer overflow", state, mem, addr);
+			handle("integer overflow", mem, addr);
 		}
 
 		@Override
-		public void illegalInstruction(ProcessorState state, Memory mem, int addr) {
-			handle("unaligned memory", state, mem, addr);
+		public void illegalInstruction(ProcessorState state, Memory mem,
+				int addr) {
+			handle("unaligned memory", mem, addr);
 		}
 
 		@Override
@@ -918,7 +938,8 @@ public class MassTestingBewied {
 
 		@Override
 		public void syscall(final ProcessorState state, final Memory mem) {
-			final int insn = mem.load(state.pc, de.unisb.prog.mips.simulator.Type.WORD);
+			final int insn = mem.load(state.pc,
+					de.unisb.prog.mips.simulator.Type.WORD);
 			final int rs = Instruction.FIELD_RS.extract(insn);
 			final int rt = Instruction.FIELD_RT.extract(insn);
 			final int rd = Instruction.FIELD_RD.extract(insn);
@@ -927,14 +948,17 @@ public class MassTestingBewied {
 			}
 			int actual = state.gp[rs];
 			if (passed >= expectedOutput.length) {
-				fail("Tried to print " + actual + ".\nExpected " + expectedOutput.length
-						+ " outputs, but" + " not more (failed on " + (expectedOutput.length + 1)
-						+ "th syscall, every call before" + " this one was correct).");
+				fail("Tried to print " + actual + ".\nExpected "
+						+ expectedOutput.length + " outputs, but"
+						+ " not more (failed on " + (expectedOutput.length + 1)
+						+ "th syscall, every call before"
+						+ " this one was correct).");
 			}
 			int expected = expectedOutput[passed];
 			if (expected != actual) {
-				fail("Expected " + (passed + 1) + "th (starting with" + " 1) syscall to print "
-						+ expected + ", not " + actual + ".\nEvery syscall before"
+				fail("Expected " + (passed + 1) + "th (starting with"
+						+ " 1) syscall to print " + expected + ", not "
+						+ actual + ".\nEvery syscall before"
 						+ " this one was correct, but aborting now.");
 			}
 			// It took me one whole day to notice that the following line had
@@ -945,8 +969,8 @@ public class MassTestingBewied {
 		public final void assertComplete() {
 			if (passed != expectedOutput.length) {
 				fail("Execution stopped prematurely -- " + passed
-						+ " syscalls have been issued, all of them correct," + " but "
-						+ expectedOutput.length + " were expected.");
+						+ " syscalls have been issued, all of them correct,"
+						+ " but " + expectedOutput.length + " were expected.");
 			}
 		}
 	}
@@ -962,8 +986,8 @@ public class MassTestingBewied {
 
 	public static final Configuration getConfiguration() {
 		if (config == null) {
-			config = buildConfiguration(CompilerTestUpdateTool.getAttribute(OPTIMIZE_ATTRIBUTE,
-					false));
+			config = buildConfiguration(CompilerTestUpdateTool.getAttribute(
+					OPTIMIZE_ATTRIBUTE, false));
 		}
 
 		return config;
@@ -977,7 +1001,8 @@ public class MassTestingBewied {
 		}
 	}
 
-	private static final class AlwaysOptimizingConfiguration implements Configuration {
+	private static final class AlwaysOptimizingConfiguration implements
+			Configuration {
 		private final Configuration backing;
 
 		public AlwaysOptimizingConfiguration(Configuration backing) {
