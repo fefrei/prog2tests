@@ -7,9 +7,9 @@ import prog2.project4.tests.prog2tests.MassTestingBewied.Program;
 public class TreeBewiedTest {
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("TreeBewiedTest", "1.0");
+		CompilerTestUpdateTool.doUpdateTest("TreeBewiedTest", "1.0.1");
 	}
-
+	
 	// ===== TESTS
 	// Thanks to the static import, all the utilities are hidden in
 	// MassTestingBewied.
@@ -29,8 +29,7 @@ public class TreeBewiedTest {
 		// "Good" == "Shouldn't throw an exception ever"
 		assertNoException("int foo(int a) { return a; }", "(a)");
 		assertNoException("int foo(int a) { { int b = 42; } return a; }", "(a (b))");
-		assertNoException("int foo(int a) { int c = -1; { int b = a; c = b + 3; } return c; }",
-				"(a, c (b))");
+		assertNoException("int foo(int a) { int c = -1; { int b = a; c = b + 3; } return c; }", "(a, c (b))");
 		assertNoException("int foo(int a) { a = 42; return a; }", "(a)");
 		assertNoException("int foo(int a) { { int a = 42; } return a; }", "(a (a))");
 	}
@@ -45,8 +44,10 @@ public class TreeBewiedTest {
 		assertTypingException("boolean foo(int a) { return !a; }", "(a)");
 		assertTypingException("int foo(int a) { return a > 4; }", "(a)");
 		assertTypingException("boolean foo(boolean a) { return a > 4; }", "(a)");
-		assertTypingException("boolean foo(int a) {" + " return (a ? false : true) ; }", "(a)");
-		assertTypingException("boolean foo(boolean a) {" + " return (a ? 23 : true) ; }", "(a)");
+		assertTypingException("boolean foo(int a) {"
+				+ " return (a ? false : true) ; }", "(a)");
+		assertTypingException("boolean foo(boolean a) {"
+				+ " return (a ? 23 : true) ; }", "(a)");
 		assertTypingException("int foo(int a) { return a << true ; }", "(a)");
 		assertTypingException("int foo(int a) { return a + true ; }", "(a)");
 		assertTypingException("int foo(int a) { return a | true ; }", "(a)");
@@ -58,10 +59,18 @@ public class TreeBewiedTest {
 	@Test
 	public void testExoticTypingBad() {
 		// "Bad" == "Should throw an exception"
-		assertTypingException("int foo(int a) {" + " while (a & 3) { } return 42; }", "(a ())");
-		assertTypingException("int foo(int a) {" + " do { } while (a & 3); return 42; }", "(a ())");
-		assertTypingException("int foo(int a) {" + " if (a & 3) {} return 42; }", "(a ())");
-		assertTypingException("int foo(int a) {" + " { boolean a = a > 42; boolean b = a < 23; }"
+		assertTypingException("int foo(int a) {"
+				+ " while (a & 3) { } return 42; }", "(a ())");
+		assertTypingException("int foo(int a) {"
+				+ " do { } while (a & 3); return 42; }", "(a ())");
+		assertTypingException("int foo(int a) {"
+				+ " if (a & 3) {} return 42; }", "(a ())");
+		assertTypingException("int foo(int a) {"
+				+ " return !a; }", "(a)");
+		assertTypingException("boolean foo(int a) {"
+				+ " return !a; }", "(a)");
+		assertTypingException("int foo(int a) {"
+				+ " { boolean a = a > 42; boolean b = a < 23; }"
 				+ " return 42; }", "(a (a, b))");
 	}
 
