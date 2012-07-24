@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,6 +23,7 @@ import prog2.project4.tree.Scope;
 import prog2.project4.tree.Tree;
 import prog2.project4.tree.TreeFactory;
 import prog2.project4.tree.TypingException;
+import de.unisb.prog.mips.assembler.Address;
 import de.unisb.prog.mips.assembler.LabelAlreadyDefinedException;
 import de.unisb.prog.mips.assembler.LabelRef;
 import de.unisb.prog.mips.assembler.Reg;
@@ -38,7 +40,7 @@ import de.unisb.prog.mips.simulator.SysCallHandler;
 public class MassTestingBewied {
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.3");
+		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.4");
 	}
 
 	// ===== CONSTANTS ====
@@ -825,7 +827,7 @@ public class MassTestingBewied {
 		}
 
 		private final void prepareAsm() {
-			asm = new MipsAsm();
+			asm = new CheckingMipsAsm();
 			try {
 				asm.getText().label(USER_START);
 			} catch (LabelAlreadyDefinedException e) {
@@ -1017,6 +1019,329 @@ public class MassTestingBewied {
 		@Override
 		public MipsCodeGenerator getCodeGenerator(MipsAsm asm, boolean optimize) {
 			return backing.getCodeGenerator(asm, true);
+		}
+	}
+
+	static final LinkedList<Reg> ALLOWED_REGS = new LinkedList<Reg>();
+
+	static {
+		ALLOWED_REGS.add(Reg.zero);
+		ALLOWED_REGS.add(Reg.v0);
+		ALLOWED_REGS.add(Reg.v1);
+		ALLOWED_REGS.add(Reg.a0);
+		ALLOWED_REGS.add(Reg.a1);
+		ALLOWED_REGS.add(Reg.a2);
+		ALLOWED_REGS.add(Reg.a3);
+		ALLOWED_REGS.add(Reg.t0);
+		ALLOWED_REGS.add(Reg.t1);
+		ALLOWED_REGS.add(Reg.t2);
+		ALLOWED_REGS.add(Reg.t3);
+		ALLOWED_REGS.add(Reg.t4);
+		ALLOWED_REGS.add(Reg.t5);
+		ALLOWED_REGS.add(Reg.t6);
+		ALLOWED_REGS.add(Reg.t7);
+		ALLOWED_REGS.add(Reg.t8);
+		ALLOWED_REGS.add(Reg.t9);
+		ALLOWED_REGS.add(Reg.sp);
+	}
+
+	private static final class CheckingMipsAsm extends MipsAsm {
+		public CheckingMipsAsm() {
+		}
+
+		private static final boolean isAllowed(final Reg r) {
+			return ALLOWED_REGS.contains(r);
+		}
+
+		private static final void assertAllowed(final Reg r) {
+			if (!isAllowed(r)) {
+				throw new IllegalArgumentException("You used the register "
+						+ String.valueOf(r) + " which isn't allowed. You may"
+						+ " only use one of these: " + ALLOWED_REGS);
+			}
+		}
+
+		@Override
+		public void move(Reg target, Reg source) {
+			assertAllowed(target);
+			assertAllowed(source);
+			super.move(target, source);
+		}
+
+		@Override
+		public void li(Reg target, int constant) {
+			assertAllowed(target);
+			super.li(target, constant);
+		}
+
+		@Override
+		public void la(Reg target, Address addr) {
+			throw new UnsupportedOperationException("\n\n========== What the? "
+					+ "What do you need 'la' for? =====\nPlease send a ticket "
+					+ "that this happened:\nhttps://code.google.com/p/prog2tes"
+					+ "ts/issues/entry\n\n");
+		}
+
+		@Override
+		public void addu(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.addu(target, op0, op1);
+		}
+
+		@Override
+		public void addiu(Reg target, Reg op0, int imm) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.addiu(target, op0, imm);
+		}
+
+		@Override
+		public void subu(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.subu(target, op0, op1);
+		}
+
+		@Override
+		public void subiu(Reg target, Reg op0, int imm) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.subiu(target, op0, imm);
+		}
+
+		@Override
+		public void not(Reg target, Reg source) {
+			assertAllowed(target);
+			assertAllowed(source);
+			super.not(target, source);
+		}
+
+		@Override
+		public void neg(Reg target, Reg source) {
+			assertAllowed(target);
+			assertAllowed(source);
+			super.neg(target, source);
+		}
+
+		@Override
+		public void slt(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.slt(target, op0, op1);
+		}
+
+		@Override
+		public void slti(Reg target, Reg op0, int imm) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.slti(target, op0, imm);
+		}
+
+		@Override
+		public void lui(Reg target, Reg op0, int imm) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.lui(target, op0, imm);
+		}
+
+		@Override
+		public void andi(Reg target, Reg op0, int imm) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.andi(target, op0, imm);
+		}
+
+		@Override
+		public void xori(Reg target, Reg op0, int imm) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.xori(target, op0, imm);
+		}
+
+		@Override
+		public void ori(Reg target, Reg op0, int imm) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.ori(target, op0, imm);
+		}
+
+		@Override
+		public void sll(Reg target, Reg op0, int amt) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.sll(target, op0, amt);
+		}
+
+		@Override
+		public void srl(Reg target, Reg op0, int amt) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.srl(target, op0, amt);
+		}
+
+		@Override
+		public void sra(Reg target, Reg op0, int amt) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			super.sra(target, op0, amt);
+		}
+
+		@Override
+		public void sllv(Reg target, Reg op, Reg amt) {
+			assertAllowed(target);
+			assertAllowed(op);
+			assertAllowed(amt);
+			super.sllv(target, op, amt);
+		}
+
+		@Override
+		public void srlv(Reg target, Reg op, Reg amt) {
+			assertAllowed(target);
+			assertAllowed(op);
+			assertAllowed(amt);
+			super.srlv(target, op, amt);
+		}
+
+		@Override
+		public void srav(Reg target, Reg op, Reg amt) {
+			assertAllowed(target);
+			assertAllowed(op);
+			assertAllowed(amt);
+			super.srav(target, op, amt);
+		}
+
+		@Override
+		public void and(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.and(target, op0, op1);
+		}
+
+		@Override
+		public void xor(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.xor(target, op0, op1);
+		}
+
+		@Override
+		public void nor(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.nor(target, op0, op1);
+		}
+
+		@Override
+		public void or(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.or(target, op0, op1);
+		}
+
+		@Override
+		public void mult(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.mult(target, op0, op1);
+		}
+
+		@Override
+		public void div(Reg target, Reg op0, Reg op1) {
+			assertAllowed(target);
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.div(target, op0, op1);
+		}
+
+		@Override
+		public void lw(Reg target, Reg base, int offset) {
+			assertAllowed(target);
+			assertAllowed(base);
+			super.lw(target, base, offset);
+		}
+
+		@Override
+		public void sw(Reg value, Reg base, int offset) {
+			assertAllowed(value);
+			assertAllowed(base);
+			super.sw(value, base, offset);
+		}
+
+		@Override
+		public void beq(Reg op0, Reg op1, LabelRef ref) {
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.beq(op0, op1, ref);
+		}
+
+		@Override
+		public void bne(Reg op0, Reg op1, LabelRef ref) {
+			assertAllowed(op0);
+			assertAllowed(op1);
+			super.bne(op0, op1, ref);
+		}
+
+		@Override
+		public void blez(Reg op0, LabelRef ref) {
+			assertAllowed(op0);
+			super.blez(op0, ref);
+		}
+
+		@Override
+		public void bltz(Reg op0, LabelRef ref) {
+			assertAllowed(op0);
+			super.bltz(op0, ref);
+		}
+
+		@Override
+		public void bgez(Reg op0, LabelRef ref) {
+			assertAllowed(op0);
+			super.bgez(op0, ref);
+		}
+
+		@Override
+		public void bgtz(Reg op0, LabelRef ref) {
+			assertAllowed(op0);
+			super.bgtz(op0, ref);
+		}
+
+		@Override
+		public void beqz(Reg op0, LabelRef ref) {
+			assertAllowed(op0);
+			super.beqz(op0, ref);
+		}
+
+		@Override
+		public void bnez(Reg op0, LabelRef ref) {
+			assertAllowed(op0);
+			super.bnez(op0, ref);
+		}
+
+		@Override
+		public void jr(Reg addr) {
+			assertAllowed(addr);
+			super.jr(addr);
+		}
+
+		@Override
+		public void jalr(Reg addr) {
+			assertAllowed(addr);
+			super.jalr(addr);
+		}
+
+		@Override
+		public void print(Reg reg) {
+			assertAllowed(reg);
+			super.print(reg);
 		}
 	}
 }
