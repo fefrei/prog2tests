@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
+import prog2.project4.tests.prog2tests.CompilerTestUpdateTool;
+
 
 /**
  * 
@@ -21,15 +23,24 @@ import org.junit.*;
  */
 
 public class LoopsMarkusTest extends TestBaseMarkus {
-	public final String VERSION = "1.0";
+	public final String VERSION = "1.1";
 	
 	// If you don't want that console output, go to tests/TestBase.java, line 39
 	// and replace true with false. 
 	
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("LoopsMarkusTest", VERSION);
+		if (workingcopy) return;
+		String name = getClass().getName();
+		name = name.substring(name.lastIndexOf('.')+1, name.length());
+		if (! updatePossible(name)){
+			System.out.println((name+" has not yet been added on update server. Don't worry."));
+			return;
+		}
+		CompilerTestUpdateTool.doUpdateTest(name, VERSION);
 	}
+	
+	
 	
 	
 	@Test
@@ -39,7 +50,7 @@ public class LoopsMarkusTest extends TestBaseMarkus {
 			int f(){
 				int a=-1;
 				while (a < 0){
-					int a = 5;
+					int a = 5; 
 				}
 				return a;
 			}
@@ -246,7 +257,7 @@ public class LoopsMarkusTest extends TestBaseMarkus {
 		assertEquals("simple do-while loop fails (Subtest 4)", 2, res);
 		
 		}catch(AssertionError e){
-			System.err.println(geterrhead());
+			printerrhead();
 			System.out.println(e.getMessage());
 			printCode();
 			printAsm();
@@ -384,7 +395,7 @@ public class LoopsMarkusTest extends TestBaseMarkus {
 		
 		
 		}catch(AssertionError e){
-			System.err.println(geterrhead());
+			printerrhead();
 			System.out.println(e.getMessage());
 			printCode();
 			printAsm();
@@ -489,7 +500,7 @@ public class LoopsMarkusTest extends TestBaseMarkus {
 		
 		
 		}catch(AssertionError e){
-			System.err.println(geterrhead());
+			printerrhead();
 			System.out.println(e.getMessage());
 			printCode();
 			printAsm();
@@ -575,7 +586,7 @@ public class LoopsMarkusTest extends TestBaseMarkus {
 		assertEquals("continue doesn't work with do-while", 18, getResult(code, null));
 		
 		}catch(AssertionError e){
-			System.err.println(geterrhead());
+			printerrhead();
 			System.out.println(e.getMessage());
 			printCode();
 			printAsm();
@@ -825,7 +836,7 @@ public class LoopsMarkusTest extends TestBaseMarkus {
 		
 		
 		}catch(AssertionError e){
-			System.err.println(geterrhead());
+			printerrhead();
 			System.out.println(e.getMessage());
 			printCode();
 			printAsm();
@@ -1047,7 +1058,7 @@ public class LoopsMarkusTest extends TestBaseMarkus {
 		
 		
 		}catch(AssertionError e){
-			System.err.println(geterrhead());
+			printerrhead();
 			System.out.println(e.getMessage());
 			printCode();
 			printAsm();
