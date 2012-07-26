@@ -9,6 +9,7 @@ prog2|project4|tests|prog2tests|
 +TestBaseMarkus.java
 +LoopsMarkusTest.java
 +OperatorsMarkusTest.java
++IfCondMarkusTest.java
 +MassTestingBewied.java 
 +TreeBewiedTest.java
 

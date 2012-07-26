@@ -1,2 +1,2 @@
-1.1.0
+1.0
 prog2|project4|tests|prog2tests|
