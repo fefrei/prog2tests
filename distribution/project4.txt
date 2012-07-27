@@ -1,18 +1,37 @@
-# Change to correct directory
+
+# Ben's tests and utilities
 prog2|project4|tests|prog2tests|
-# Never forget the last pipe
-
-
-# Straightforward: Add (download) these files.
 +TestUtilBewied.java
++MassTestingBewied.java 
++TreeBewiedTest.java
++AdvancedBewiedTests.java
+
+
+# Felix' tests and utilities
+prog2|project4|tests|prog2tests|
+# +NoTestsWrittenYet.java
+
+
+# Andreas' test(s)
+prog2|project4|tests|prog2tests|
 +CompilerAndreasTest.java
+
+
+# Markus' tests and utilities
+prog2|project4|tests|prog2tests|
 +TestBaseMarkus.java
 +LoopsMarkusTest.java
 +OperatorsMarkusTest.java
 +IfCondMarkusTest.java
-+MassTestingBewied.java 
-+TreeBewiedTest.java
 
+
+# I repeat the path just because I think it looks nice.
+# Take them out (except the first one) if you think otherwise.
+
+# If we ever need to delete files:
+# examples|Ben|
+# -BrokenFile.txt
+# -BadStuff.txt
 
 # For higher constructs of this language, see:
 # src|parserExample.txt
