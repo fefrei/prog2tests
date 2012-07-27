@@ -40,7 +40,7 @@ import de.unisb.prog.mips.simulator.SysCallHandler;
 public class MassTestingBewied {
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.0.4");
+		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.1");
 	}
 
 	// ===== CONSTANTS ====
@@ -48,6 +48,8 @@ public class MassTestingBewied {
 
 	// I have no idea what this does:
 	private static final boolean DEBUG_DRIVER = false;
+
+	private static final boolean RUN_DIRECTLY_NO_MATTER_WHAT = false;
 
 	// Prevent typos:
 	private static final String TIMEOUT_ATTRIBUTE = "mass_timeout",
@@ -556,12 +558,16 @@ public class MassTestingBewied {
 	}
 
 	public static final void runWrapped(Program p, int timeout) {
-		// Make sure the timer doesn't die or does something unexpected
-		Timer t = new Timer(false);
-		StatefulRunnable sr = new StatefulRunnable(p);
-		t.schedule(new TimeoutTask(Thread.currentThread(), sr, timeout),
-				timeout);
-		sr.run();
+		if (RUN_DIRECTLY_NO_MATTER_WHAT) {
+			p.run();
+		} else {
+			// Make sure the timer doesn't die or does something unexpected
+			Timer t = new Timer(true);
+			StatefulRunnable sr = new StatefulRunnable(p);
+			t.schedule(new TimeoutTask(Thread.currentThread(), sr, timeout),
+					timeout);
+			sr.run();
+		}
 	}
 
 	public static final class TimeoutTask extends TimerTask {
@@ -649,21 +655,15 @@ public class MassTestingBewied {
 		}
 
 		public Behavior(int input, int[] output, int result) {
-			this.input = new int[] { input };
-			this.expectedOutput = output;
-			this.expectedResult = result;
+			this(new int[] { input }, output, result);
 		}
 
 		public Behavior(int input, int result) {
-			this.input = new int[] { input };
-			this.expectedOutput = EMPTY;
-			this.expectedResult = result;
+			this(new int[] { input }, result);
 		}
 
 		public Behavior(int[] input, int result) {
-			this.input = input;
-			this.expectedOutput = EMPTY;
-			this.expectedResult = result;
+			this(input, EMPTY, result);
 		}
 	}
 
