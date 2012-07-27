@@ -6,7 +6,7 @@ import prog2.project4.tests.TestBase;
 
 public class EvilFelixTest extends TestBase {
 
-	public final String VERSION = "1.0";
+	public final String VERSION = "1.0.1";
 	
 	@Test
 	public void test_Update(){
@@ -31,7 +31,7 @@ public class EvilFelixTest extends TestBase {
 					"Since there is a surrounding function, there is *no* guarantee that 12 registers are enough.\n" +
 					"This is not a severe problem, because it is really mean*, but you should still consider fixing it.\n" +
 					"* Tobias hinted that they will not test this.\n");
-			throw new Exception("Your compile threw an exception. See console.", e);
+			throw new Exception("Your compiler threw an exception. See console.", e);
 		}
 	}
 
