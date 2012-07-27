@@ -40,7 +40,7 @@ import de.unisb.prog.mips.simulator.SysCallHandler;
 public class MassTestingBewied {
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.1");
+		CompilerTestUpdateTool.doUpdateTest("MassTestingBewied", "1.1.1");
 	}
 
 	// ===== CONSTANTS ====
@@ -1043,6 +1043,8 @@ public class MassTestingBewied {
 		ALLOWED_REGS.add(Reg.t8);
 		ALLOWED_REGS.add(Reg.t9);
 		ALLOWED_REGS.add(Reg.sp);
+		ALLOWED_REGS.add(Reg.at);
+		ALLOWED_REGS.add(Reg.ra);
 	}
 
 	private static final class CheckingMipsAsm extends MipsAsm {
