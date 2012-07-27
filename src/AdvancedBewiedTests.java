@@ -11,7 +11,7 @@ import prog2.project4.tests.prog2tests.MassTestingBewied.Program;
 public class AdvancedBewiedTests {
 	@Test
 	public void test_Update() {
-		CompilerTestUpdateTool.doUpdateTest("AdvancedBewiedTests", "1.0");
+		CompilerTestUpdateTool.doUpdateTest("AdvancedBewiedTests", "1.1");
 	}
 
 	// ===== TESTS
@@ -81,7 +81,7 @@ public class AdvancedBewiedTests {
 
 		Program p = new Program(text, ParseEntity.EXPR, "()");
 		p.add(new Behavior(EMPTY, EMPTY, expected));
-		runDirectly(p);
+		runWrapped(p);
 	}
 
 	@Test
