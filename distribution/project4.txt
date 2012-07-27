@@ -4,7 +4,7 @@ prog2|project4|tests|prog2tests|
 +TestUtilBewied.java
 +MassTestingBewied.java 
 +TreeBewiedTest.java
-# +AdvancedBewiedTests.java
++AdvancedBewiedTests.java
 
 
 # Felix' tests and utilities
