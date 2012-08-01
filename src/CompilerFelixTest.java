@@ -1,5 +1,7 @@
 package prog2.project4.tests.prog2tests;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import prog2.project4.driver.Configuration;
@@ -9,7 +11,7 @@ import prog2.project4.tree.TreeFactory;
 
 public class CompilerFelixTest extends TestBase {
 
-	public final String VERSION = "1.2";
+	public final String VERSION = "1.2.1";
 
 	@Test
 	public void test_Update() {
@@ -38,8 +40,8 @@ public class CompilerFelixTest extends TestBase {
 		Tree listTree = factory.makeList();
 		Tree innerTree = factory.makeList();
 		listTree.setOperand(50, innerTree);
-		assert (listTree.getOperand(50) == innerTree);
-		assert (listTree.getOperand(42) == null); // was never set, must be null
+		assertTrue(listTree.getOperand(50) == innerTree);
+		assertTrue(listTree.getOperand(42) == null); // was never set, must be null
 	}
 
 }
