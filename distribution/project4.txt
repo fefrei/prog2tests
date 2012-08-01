@@ -10,6 +10,7 @@ prog2|project4|tests|prog2tests|
 # Felix' tests and utilities
 prog2|project4|tests|prog2tests|
 +EvilFelixTest.java
++CompilerFelixTest.java
 
 
 # Andreas' test(s)
