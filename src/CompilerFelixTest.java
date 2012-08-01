@@ -9,19 +9,27 @@ import prog2.project4.tree.TreeFactory;
 
 public class CompilerFelixTest extends TestBase {
 
-	public final String VERSION = "1.1";
+	public final String VERSION = "1.2";
 
 	@Test
 	public void test_Update() {
 		CompilerTestUpdateTool.doUpdateTest("CompilerFelixTest", VERSION);
 	}
 
+	/**
+	 * Tests if while-blocks don't open new scopes, and the body of
+	 * do-while-loops executes at least once.
+	 */
 	@Test
 	public void doWhileScopeExecutionTest() {
-		// loops don't open new scopes, and do-while-loops execute at least once
 		assertResult("int scopetest(int x) { do { x = 42; } while (false); return x; }", 42, 5);
+		assertResult("int scopetest(int x) { do { int x = 42; } while (false); return x; }", 5, 5);
 	}
-	
+
+	/**
+	 * Tests if your implemented setOperand and getOperand according to the
+	 * specification (or how Tobias reads the specification)
+	 */
 	@Test
 	public void setOperandMeanTest() {
 		// Yes, this has to work. Sorry.
@@ -30,8 +38,8 @@ public class CompilerFelixTest extends TestBase {
 		Tree listTree = factory.makeList();
 		Tree innerTree = factory.makeList();
 		listTree.setOperand(50, innerTree);
-		assert(listTree.getOperand(50) == innerTree);
-		assert(listTree.getOperand(42) == null); // was never set, must be null
+		assert (listTree.getOperand(50) == innerTree);
+		assert (listTree.getOperand(42) == null); // was never set, must be null
 	}
 
 }
