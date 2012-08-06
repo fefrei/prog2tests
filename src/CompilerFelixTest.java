@@ -13,7 +13,7 @@ import prog2.project4.tree.TreeFactory;
 
 public class CompilerFelixTest extends TestBase {
 
-	public final String VERSION = "1.3";
+	public final String VERSION = "1.3.1";
 
 	@Test
 	public void test_Update() {
@@ -76,5 +76,13 @@ public class CompilerFelixTest extends TestBase {
 	@Test
 	public void scopeNestedDeclaration() {
 		assertResult("int f(int x) { int a = 5; { int a = 10; } return a; }", 5, 42);
+	}
+
+	/**
+	 * Tests that you can't be tricked into an infinite loop
+	 */
+	@Test
+	public void doContinueWhileFalseTest() {
+		assertResult("int f(int x) { do { continue; } while(false); return 5; }", 5, 42);
 	}
 }
